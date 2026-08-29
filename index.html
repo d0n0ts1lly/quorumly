@@ -631,19 +631,10 @@
   }
 
   // ---------- contact form ----------
-  // Форма шле дані через GitHub Actions: цей запит запускає workflow
-  // (.github/workflows/contact-form.yml), який вже сам, маючи доступ до
-  // GitHub Secrets, відправляє повідомлення в Telegram. Bot-токен ніде тут
-  // не зберігається — див. README.md.
-  const GITHUB_OWNER = "d0n0ts1lly";
-  const GITHUB_REPO = "WebPulse";
-  // Fine-grained PAT. ВАЖЛИВО про помилку 401: самого лише права
-  // "Actions: Read and write" GitHub API для /dispatches часто НЕ приймає.
-  // Зайдіть у Settings → Developer settings → Fine-grained tokens →
-  // відкрийте цей токен → Edit permissions → додайте ще
-  // "Contents: Read and write" (значення токена при цьому НЕ зміниться,
-  // можна нічого тут не переклеювати). Детальніше — в README.md.
-  const GITHUB_DISPATCH_TOKEN = "PASTE-YOUR-TOKEN-HERE";
+  // Форма шле дані на Cloudflare Worker — маленький бекенд, який приймає
+  // заявку і сам пересилає її в Telegram. Токен бота зберігається лише
+  // в секретах воркера, сюди ніколи не потрапляє — див. README.md.
+  const FORM_ENDPOINT = "https://YOUR-WORKER-SUBDOMAIN.workers.dev";
 
   const form = document.getElementById('orderForm');
   const status = document.getElementById('formStatus');
@@ -673,22 +664,11 @@
     status.className = "form-status";
 
     try{
-      const res = await fetch(
-        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dispatches`,
-        {
-          method: "POST",
-          headers: {
-            "Accept": "application/vnd.github+json",
-            "Authorization": `Bearer ${GITHUB_DISPATCH_TOKEN}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            event_type: "contact_form",
-            client_payload: data
-          })
-        }
-      );
-      // GitHub повертає 204 No Content без тіла при успіху
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
       if(!res.ok) throw new Error("bad status");
       status.textContent = "Заявку надіслано! Відповім найближчим часом.";
       status.className = "form-status ok";
