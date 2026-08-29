@@ -62,8 +62,8 @@
     nav.open{transform:translateY(0);}
     nav ul{flex-direction:column; gap:0; padding:8px 0;}
     nav a{display:block; padding:14px 28px; border-top:1px solid var(--border);}
-    .nav-toggle{display:block;}
-    .nav-cta .btn-primary{display:none;}
+    .nav-cta{display:none;}
+    .nav-toggle{display:block; margin-left:auto;}
   }
 
   .btn{
@@ -200,6 +200,18 @@
   }
   .process-step h3{font-size:17px; font-weight:700; margin-bottom:8px;}
   .process-step p{color:var(--muted); font-size:14px;}
+  .process-step:not(:last-child)::after{
+    content:"→";
+    position:absolute;
+    top:6px; right:-27px;
+    color:var(--accent);
+    font-family:var(--mono);
+    font-size:20px;
+    font-weight:600;
+  }
+  @media (max-width:900px){
+    .process-step:not(:last-child)::after{display:none;}
+  }
 
   /* ---------- PORTFOLIO ---------- */
   .portfolio-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:24px;}
@@ -278,7 +290,6 @@
 <header>
   <div class="nav-inner">
     <div class="logo">Web<span>Pulse</span></div>
-    <button class="nav-toggle" id="navToggle" aria-label="Відкрити меню" aria-expanded="false">≡</button>
     <nav id="navMenu">
       <ul>
         <li><a href="#services">Послуги</a></li>
@@ -291,6 +302,7 @@
     <div class="nav-cta">
       <a href="#contact" class="btn btn-primary">Замовити сайт</a>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Відкрити меню" aria-expanded="false">≡</button>
   </div>
 </header>
 
@@ -301,7 +313,7 @@
     <div class="hero-bg"></div>
     <div class="wrap hero-grid">
       <h1>Сайт, який <span class="accent">продає</span>,<br>а не просто існує</h1>
-      <p class="hero-sub">Розробляю лендінги, інтернет-магазини та корпоративні сайти під ключ — від макету до запуску. Python/Flask, MySQL, власна адмін-панель, автоматизація рутини.</p>
+      <p class="hero-sub">Розробляю лендінги, інтернет-магазини та корпоративні сайти під ключ — від макету до запуску.</p>
       <div class="hero-actions">
         <a href="#contact" class="btn btn-primary">Обговорити проєкт</a>
         <a href="#portfolio" class="btn btn-ghost">Переглянути роботи</a>
@@ -350,7 +362,6 @@
           <div class="service-icon">02</div>
           <h3>Інтернет-магазин</h3>
           <p>Каталог товарів, кошик, оформлення замовлення, власна адмін-панель для керування товарами та цінами без розробника.</p>
-          <p class="service-integrations">Інтеграції: Nova Poshta API, LiqPay, MonoPay та інші сервіси</p>
           <div class="service-foot">
             <span class="service-price">від $350 · ₴15 610 <small>/ 3–5 тижнів, є додаткові функції</small></span>
           </div>
@@ -379,7 +390,7 @@
           <h3>Підтримка сайту</h3>
           <p>Технічна підтримка вже готового сайту: правки контенту, моніторинг роботи, дрібні доробки та консультації.</p>
           <div class="service-foot">
-            <span class="service-price">від $40 · ₴1 780 <small>/ місяць, залежить від сайту</small></span>
+            <span class="service-price">від $35 · ₴1 561 <small>/ місяць, залежить від сайту</small></span>
           </div>
         </div>
 
@@ -441,21 +452,6 @@
           </div>
         </a>
 
-        <a class="portfolio-card browser-frame" href="https://tochmed.com.ua" target="_blank" rel="noopener">
-          <div class="browser-chrome">
-            <div class="dots"><span></span><span></span><span></span></div>
-            <div class="browser-url">tochmed.com.ua</div>
-          </div>
-          <div class="portfolio-body">
-            <span class="portfolio-tag">Односторінковий магазин</span>
-            <h3>Tochmed</h3>
-            <p>Легкий магазин з фіксованим каталогом на чистому HTML/CSS/JS — без бази даних, швидкий і простий.</p>
-            <div class="portfolio-stack">
-              <span class="ptag">HTML</span><span class="ptag">CSS</span><span class="ptag">JavaScript</span>
-            </div>
-          </div>
-        </a>
-
         <a class="portfolio-card browser-frame" href="https://www.originalbrands.com.ua" target="_blank" rel="noopener">
           <div class="browser-chrome">
             <div class="dots"><span></span><span></span><span></span></div>
@@ -467,6 +463,21 @@
             <p>Повноцінний інтернет-магазин з власною адмін-панеллю: керування товарами, замовленнями та контентом.</p>
             <div class="portfolio-stack">
               <span class="ptag">Flask</span><span class="ptag">MySQL</span><span class="ptag">Admin panel</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="portfolio-card browser-frame" href="https://tochmed.com.ua" target="_blank" rel="noopener">
+          <div class="browser-chrome">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <div class="browser-url">tochmed.com.ua</div>
+          </div>
+          <div class="portfolio-body">
+            <span class="portfolio-tag">Односторінковий магазин</span>
+            <h3>Tochmed</h3>
+            <p>Легкий магазин з фіксованим каталогом на чистому HTML/CSS/JS — без бази даних, швидкий і простий.</p>
+            <div class="portfolio-stack">
+              <span class="ptag">HTML</span><span class="ptag">CSS</span><span class="ptag">JavaScript</span>
             </div>
           </div>
         </a>
@@ -626,11 +637,13 @@
   // не зберігається — див. README.md.
   const GITHUB_OWNER = "d0n0ts1lly";
   const GITHUB_REPO = "WebPulse";
-  // Fine-grained PAT з ЄДИНИМ правом: "Actions: Read and write" саме для
-  // цього репозиторію. Так, він видимий у коді сторінки — це нормально
-  // ТІЛЬКИ якщо в токена немає доступу ні до чого, крім запуску Action.
-  // Детально в README.md.
-  const GITHUB_DISPATCH_TOKEN = "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";
+  // Fine-grained PAT. ВАЖЛИВО про помилку 401: самого лише права
+  // "Actions: Read and write" GitHub API для /dispatches часто НЕ приймає.
+  // Зайдіть у Settings → Developer settings → Fine-grained tokens →
+  // відкрийте цей токен → Edit permissions → додайте ще
+  // "Contents: Read and write" (значення токена при цьому НЕ зміниться,
+  // можна нічого тут не переклеювати). Детальніше — в README.md.
+  const GITHUB_DISPATCH_TOKEN = "PASTE-YOUR-TOKEN-HERE";
 
   const form = document.getElementById('orderForm');
   const status = document.getElementById('formStatus');
