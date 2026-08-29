@@ -624,13 +624,13 @@
   // (.github/workflows/contact-form.yml), який вже сам, маючи доступ до
   // GitHub Secrets, відправляє повідомлення в Telegram. Bot-токен ніде тут
   // не зберігається — див. README.md.
-  const GITHUB_OWNER = "YOUR-GITHUB-USERNAME";
-  const GITHUB_REPO = "webpulse";
+  const GITHUB_OWNER = "d0n0ts1lly";
+  const GITHUB_REPO = "WebPulse";
   // Fine-grained PAT з ЄДИНИМ правом: "Actions: Read and write" саме для
   // цього репозиторію. Так, він видимий у коді сторінки — це нормально
   // ТІЛЬКИ якщо в токена немає доступу ні до чого, крім запуску Action.
   // Детально в README.md.
-  const GITHUB_DISPATCH_TOKEN = "YOUR-FINE-GRAINED-GITHUB-TOKEN";
+  const GITHUB_DISPATCH_TOKEN = "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";
 
   const form = document.getElementById('orderForm');
   const status = document.getElementById('formStatus');
