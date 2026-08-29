@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Іван Бадун — Web-розробник</title>
+<meta name="description" content="Іван Бадун — веб-розробник. Python/Flask, WordPress, парсинг даних, MySQL.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAF9;
+    --surface:#FFFFFF;
+    --text:#15171B;
+    --text-muted:#666B73;
+    --border:#E6E6E4;
+    --accent:#2F5DFF;
+    --accent-dim:#EEF1FF;
+    --ink:#101114;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:inherit;}
+  ::selection{background:var(--accent); color:#fff;}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px;}
+
+  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(250,250,249,0.85);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-inner{
+    max-width:920px; margin:0 auto; padding:16px 28px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .logo{font-family:var(--mono); font-weight:600; font-size:15px; letter-spacing:0.02em;}
+  .logo span{color:var(--accent);}
+
+  .nav-right{display:flex; align-items:center; gap:20px;}
+
+  nav ul{list-style:none; display:flex; gap:28px;}
+  nav a{text-decoration:none; font-family:var(--mono); font-size:13px; color:var(--text-muted); transition:color 0.15s ease;}
+  nav a:hover{color:var(--accent);}
+
+  .lang-switch{
+    display:flex; border:1px solid var(--border); border-radius:6px; overflow:hidden;
+    font-family:var(--mono); font-size:12px;
+  }
+  .lang-switch button{
+    background:none; border:none; padding:6px 10px; cursor:pointer; color:var(--text-muted);
+  }
+  .lang-switch button.active{background:var(--ink); color:#fff;}
+
+  .nav-toggle{
+    display:none; background:none; border:1px solid var(--border); border-radius:6px;
+    width:36px; height:36px; font-family:var(--mono); font-size:16px; cursor:pointer;
+  }
+
+  @media (max-width:680px){
+    nav{
+      position:fixed; top:57px; left:0; right:0; background:var(--surface);
+      border-bottom:1px solid var(--border);
+      transform:translateY(-140%); transition:transform 0.25s ease;
+    }
+    nav.open{transform:translateY(0);}
+    nav ul{flex-direction:column; gap:0; padding:8px 0;}
+    nav a{display:block; padding:14px 28px; border-top:1px solid var(--border);}
+    .nav-toggle{display:block;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{padding:168px 0 96px; border-bottom:1px solid var(--border);}
+  .eyebrow{
+    font-family:var(--mono); font-size:13px; color:var(--accent);
+    display:flex; align-items:center; gap:8px; margin-bottom:20px;
+  }
+  .cursor{display:inline-block; width:8px; height:16px; background:var(--accent); animation:blink 1.1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  h1{
+    font-family:var(--display); font-weight:700;
+    font-size:clamp(40px, 7vw, 68px); letter-spacing:-0.02em; line-height:1.03; margin-bottom:18px;
+  }
+  .role{font-family:var(--mono); font-size:clamp(15px, 2vw, 18px); color:var(--text-muted); margin-bottom:28px;}
+  .role .accent{color:var(--accent);}
+  .lede{max-width:560px; font-size:17px; color:var(--text-muted); margin-bottom:36px;}
+  .hero-links{display:flex; flex-wrap:wrap; gap:12px;}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:8px;
+    font-family:var(--mono); font-size:13px; text-decoration:none; border:1px solid var(--border);
+    transition:all 0.15s ease;
+  }
+  .btn-primary{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .btn-primary:hover{background:var(--accent); border-color:var(--accent);}
+  .btn-ghost:hover{border-color:var(--accent); color:var(--accent);}
+
+  /* ---------- SECTION SHELL ---------- */
+  section{padding:88px 0; border-bottom:1px solid var(--border);}
+  .cmd{font-family:var(--mono); font-size:13px; color:var(--accent); margin-bottom:12px;}
+  .cmd::before{content:"$ "; color:var(--text-muted);}
+  h2{font-family:var(--display); font-weight:600; font-size:clamp(26px, 4vw, 34px); margin-bottom:40px; letter-spacing:-0.01em;}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{display:grid; grid-template-columns:1.4fr 1fr; gap:56px;}
+  @media (max-width:680px){.about-grid{grid-template-columns:1fr; gap:32px;}}
+  .about-grid p{color:var(--text-muted); font-size:16px; margin-bottom:16px;}
+  .about-grid p strong{color:var(--text); font-weight:600;}
+
+  .fact-list{border:1px solid var(--border); border-radius:10px; overflow:hidden; height:fit-content;}
+  .fact{display:flex; justify-content:space-between; gap:12px; padding:14px 18px; font-size:14px; border-bottom:1px solid var(--border);}
+  .fact:last-child{border-bottom:none;}
+  .fact-label{font-family:var(--mono); color:var(--text-muted);}
+  .fact-value{font-weight:500; text-align:right;}
+
+  /* ---------- EXPERIENCE (без "окон"-боксов, период — простой текст) ---------- */
+  .timeline{display:flex; flex-direction:column;}
+  .tl-item{padding:28px 0; border-top:1px solid var(--border);}
+  .tl-item:first-child{border-top:none;}
+  .tl-period{font-family:var(--mono); font-size:12px; color:var(--text-muted); margin-bottom:8px;}
+  .tl-role{font-weight:600; font-size:17px; margin-bottom:6px;}
+  .tl-org{font-family:var(--mono); font-size:13px; color:var(--accent); margin-bottom:10px;}
+  .tl-desc{color:var(--text-muted); font-size:15px; max-width:680px;}
+
+  /* ---------- SKILLS ---------- */
+  .skill-groups{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:32px;}
+  .skill-group-title{font-family:var(--mono); font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:14px;}
+  .chip-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{font-family:var(--mono); font-size:13px; padding:7px 12px; border:1px solid var(--border); border-radius:6px; background:var(--surface);}
+
+  /* ---------- PROJECTS ---------- */
+  .projects{display:flex; flex-direction:column; border:1px solid var(--border); border-radius:10px; overflow:hidden;}
+  .project{
+    display:grid; grid-template-columns:36px 1fr auto; gap:18px; align-items:start;
+    padding:24px 22px; border-top:1px solid var(--border); text-decoration:none; color:inherit;
+    transition:background 0.15s ease;
+  }
+  .project:first-child{border-top:none;}
+  .project:hover{background:var(--accent-dim);}
+  @media (max-width:680px){
+    .project{grid-template-columns:28px 1fr; row-gap:10px;}
+    .project-status{grid-column:1 / -1;}
+  }
+  .project-ext{
+    font-family:var(--mono); font-size:11px; color:#fff; background:var(--ink);
+    border-radius:5px; width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+  }
+  .project-name{font-weight:600; font-size:16px; margin-bottom:4px; display:flex; align-items:center; gap:8px;}
+  .project-name .arrow{color:var(--accent); font-family:var(--mono); font-size:14px;}
+  .project-desc{color:var(--text-muted); font-size:14px; margin-bottom:10px;}
+  .project-stack{display:flex; flex-wrap:wrap; gap:6px;}
+  .tag{font-family:var(--mono); font-size:11px; color:var(--text-muted); background:var(--bg); border:1px solid var(--border); padding:3px 8px; border-radius:4px;}
+  .project-status{font-family:var(--mono); font-size:11px; color:var(--accent); white-space:nowrap; align-self:start; padding-top:2px;}
+
+  /* ---------- EDUCATION (без боксов с годами, период — простая строка) ---------- */
+  .edu-item{padding:24px 0; border-top:1px solid var(--border);}
+  .edu-item:first-child{border-top:none;}
+  .edu-period{font-family:var(--mono); font-size:12px; color:var(--text-muted); margin-bottom:8px;}
+  .edu-school{font-weight:600; font-size:16px; margin-bottom:4px;}
+  .edu-spec{color:var(--text-muted); font-size:14px;}
+
+  /* ---------- CONTACT (без формы) ---------- */
+  .contact-links{max-width:520px; display:flex; flex-direction:column; gap:2px;}
+  .contact-link{
+    display:flex; justify-content:space-between; align-items:center; padding:18px 4px;
+    border-bottom:1px solid var(--border); text-decoration:none; color:var(--text);
+    font-size:16px; transition:color 0.15s ease;
+  }
+  .contact-link:hover{color:var(--accent);}
+  .contact-link:first-child{border-top:1px solid var(--border);}
+  .contact-link-label{font-family:var(--mono); font-size:13px; color:var(--text-muted);}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:32px 0; display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--mono); font-size:12px; color:var(--text-muted);
+  }
+  @media (max-width:520px){footer{flex-direction:column; gap:8px; text-align:center;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <div class="logo">ivan<span>_</span>badun</div>
+    <div class="nav-right">
+      <div class="lang-switch">
+        <button id="langUk" class="active" data-lang="uk">UA</button>
+        <button id="langRu" data-lang="ru">RU</button>
+      </div>
+      <button class="nav-toggle" id="navToggle" data-i18n-attr="aria-label:nav_toggle" aria-label="Відкрити меню" aria-expanded="false">≡</button>
+      <nav id="navMenu">
+        <ul>
+          <li><a href="#about" data-i18n="nav_about">про мене</a></li>
+          <li><a href="#experience" data-i18n="nav_experience">досвід</a></li>
+          <li><a href="#skills" data-i18n="nav_skills">навички</a></li>
+          <li><a href="#projects" data-i18n="nav_projects">проєкти</a></li>
+          <li><a href="#education" data-i18n="nav_education">освіта</a></li>
+          <li><a href="#contact" data-i18n="nav_contact">контакти</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero wrap" style="border-top:none;">
+    <div class="eyebrow">available for work <span class="cursor"></span></div>
+    <h1>Іван Бадун</h1>
+    <div class="role"><span data-i18n="hero_role">веб-розробник</span> <span class="accent">/</span> python &amp; flask</div>
+    <p class="lede" data-i18n="hero_lede">Розробляю сайти на Python/Flask близько року: від каталогів з автопарсингом даних до інтернет-магазинів з адмін-панеллю. Люблю писати парсери та автоматизувати рутину.</p>
+    <div class="hero-links">
+      <a href="#projects" class="btn btn-primary" data-i18n="btn_view_projects">Дивитися проєкти</a>
+      <a href="#contact" class="btn btn-ghost" data-i18n="btn_write_me">Написати мені</a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="wrap" id="about">
+    <div class="cmd">whoami</div>
+    <h2 data-i18n="about_h2">Про мене</h2>
+    <div class="about-grid">
+      <div>
+        <p data-i18n-html="about_p1">Мене звати <strong>Іван</strong>, я веб-розробник з Харкова. Уже близько року пишу комерційні проєкти на <strong>Python/Flask</strong> — від односторінкових магазинів до сайтів з каталогами, які самі поповнюються даними.</p>
+        <p data-i18n-html="about_p2">Також маю досвід роботи з <strong>WordPress</strong> — робив сайти як вручну, так і через Elementor.</p>
+        <p data-i18n-html="about_p3">Окремо люблю задачі на автоматизацію: писати парсери (<strong>BeautifulSoup4, Selenium</strong>) і поєднувати різні системи між собою через API.</p>
+        <p data-i18n-html="about_p4">Зараз продовжую рости як full-stack розробник: паралельно з комерційними проєктами навчаюсь за напрямом інженерії програмного забезпечення.</p>
+      </div>
+      <div class="fact-list">
+        <div class="fact"><span class="fact-label" data-i18n="fact_location_label">Локація</span><span class="fact-value" data-i18n="fact_location_value">Харків, Україна</span></div>
+        <div class="fact"><span class="fact-label" data-i18n="fact_age_label">Вік</span><span class="fact-value" data-i18n="fact_age_value">19 років</span></div>
+        <div class="fact"><span class="fact-label" data-i18n="fact_exp_label">Досвід (Flask)</span><span class="fact-value" data-i18n="fact_exp_value">~1 рік</span></div>
+        <div class="fact"><span class="fact-label" data-i18n="fact_stack_label">Стек</span><span class="fact-value">Python / Flask / MySQL</span></div>
+        <div class="fact"><span class="fact-label" data-i18n="fact_status_label">Статус</span><span class="fact-value" data-i18n="fact_status_value">Відкритий до пропозицій</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="wrap" id="experience">
+    <div class="cmd">history --experience</div>
+    <h2 data-i18n="experience_h2">Досвід роботи</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-period" data-i18n="exp1_period">~1 рік</div>
+        <div class="tl-role" data-i18n="exp1_role">Python / Flask розробник</div>
+        <div class="tl-org" data-i18n="exp1_org">Комерційні проєкти</div>
+        <div class="tl-desc" data-i18n="exp1_desc">Розробка сайтів на Python/Flask під ключ: каталоги товарів та автомобілів, інтернет-магазини, інтеграція із зовнішніми API, написання парсерів для автоматичного збору та оновлення даних, робота з MySQL.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-period" data-i18n="exp2_period">~6 місяців, дотепер</div>
+        <div class="tl-role" data-i18n="exp2_role">WordPress розробник</div>
+        <div class="tl-org" data-i18n="exp2_org">Комерційні проєкти</div>
+        <div class="tl-desc" data-i18n="exp2_desc">Розробка сайтів на WordPress: як вручну (кастомна верстка, PHP-шаблони), так і за допомогою конструктора Elementor.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="wrap" id="skills">
+    <div class="cmd">ls skills/</div>
+    <h2 data-i18n="skills_h2">Навички</h2>
+    <div class="skill-groups">
+      <div>
+        <div class="skill-group-title" data-i18n="skill_group_backend">Бекенд</div>
+        <div class="chip-row">
+          <span class="chip">Python</span>
+          <span class="chip">Flask</span>
+          <span class="chip">MySQL</span>
+          <span class="chip">REST API</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title" data-i18n="skill_group_frontend">Фронтенд</div>
+        <div class="chip-row">
+          <span class="chip">HTML</span>
+          <span class="chip">CSS</span>
+          <span class="chip">JavaScript</span>
+          <span class="chip">Vue.js</span>
+          <span class="chip">React</span>
+          <span class="chip">Bootstrap</span>
+          <span class="chip">Foundation</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title" data-i18n="skill_group_cms">CMS</div>
+        <div class="chip-row">
+          <span class="chip">WordPress</span>
+          <span class="chip">Elementor</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title" data-i18n="skill_group_automation">Автоматизація</div>
+        <div class="chip-row">
+          <span class="chip">BeautifulSoup4</span>
+          <span class="chip">Selenium</span>
+          <span class="chip" data-i18n="chip_parsing">Парсинг даних</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title" data-i18n="skill_group_tools">Інструменти</div>
+        <div class="chip-row">
+          <span class="chip">Git</span>
+          <span class="chip">GitHub</span>
+          <span class="chip" data-i18n="chip_api">API-інтеграції</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="wrap" id="projects">
+    <div class="cmd">ls projects/ -la</div>
+    <h2 data-i18n="projects_h2">Проєкти</h2>
+    <div class="projects">
+
+      <a class="project" href="https://www.bwauto.com.ua" target="_blank" rel="noopener">
+        <div class="project-ext">.py</div>
+        <div>
+          <div class="project-name">bwauto.com.ua <span class="arrow">↗</span></div>
+          <div class="project-desc" data-i18n="proj_bwauto_desc">Каталог автомобілів, який автоматично поповнюється даними через власний парсер. Калькулятори на Vue.js, гнучка фільтрація авто за параметрами, а також вбудований магазин автозапчастин на MySQL з інтеграцією API стороннього магазину.</div>
+          <div class="project-stack">
+            <span class="tag">Flask</span><span class="tag">Vue.js</span><span class="tag">MySQL</span>
+            <span class="tag" data-i18n="tag_parser">Парсер</span><span class="tag">API</span>
+          </div>
+        </div>
+        <div class="project-status">live</div>
+      </a>
+
+      <a class="project" href="https://tochmed.com.ua" target="_blank" rel="noopener">
+        <div class="project-ext">.js</div>
+        <div>
+          <div class="project-name">tochmed.com.ua <span class="arrow">↗</span></div>
+          <div class="project-desc" data-i18n="proj_tochmed_desc">Односторінковий інтернет-магазин з фіксованим каталогом товарів. Побудований на чистому HTML, CSS та JavaScript — без бази даних, легкий і швидкий.</div>
+          <div class="project-stack">
+            <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span>
+          </div>
+        </div>
+        <div class="project-status">live</div>
+      </a>
+
+      <a class="project" href="https://www.originalbrands.com.ua" target="_blank" rel="noopener">
+        <div class="project-ext">.py</div>
+        <div>
+          <div class="project-name">originalbrands.com.ua <span class="arrow">↗</span></div>
+          <div class="project-desc" data-i18n="proj_originalbrands_desc">Повноцінний інтернет-магазин з власною адмін-панеллю: керування товарами, замовленнями та контентом сайту без звернення до розробника.</div>
+          <div class="project-stack">
+            <span class="tag">Flask</span><span class="tag">MySQL</span><span class="tag">Admin panel</span>
+          </div>
+        </div>
+        <div class="project-status">live</div>
+      </a>
+
+      <div class="project">
+        <div class="project-ext">.py</div>
+        <div>
+          <div class="project-name">bestmed</div>
+          <div class="project-desc" data-i18n="proj_bestmed_desc">Новий проєкт у розробці на Python/Flask + MySQL. Посилання з'явиться після запуску.</div>
+          <div class="project-stack">
+            <span class="tag">Flask</span><span class="tag">MySQL</span>
+          </div>
+        </div>
+        <div class="project-status">in progress</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section class="wrap" id="education">
+    <div class="cmd">cat education.md</div>
+    <h2 data-i18n="education_h2">Освіта</h2>
+
+    <div class="edu-item">
+      <div class="edu-period" data-i18n="edu1_period">вересень 2022 — 2026</div>
+      <div class="edu-school">Харківський комп'ютерний фаховий коледж</div>
+      <div class="edu-spec" data-i18n="edu1_spec">Диплом фахового молодшого бакалавра — Інженерія програмного забезпечення</div>
+    </div>
+
+    <div class="edu-item">
+      <div class="edu-period" data-i18n="edu2_period">2026 — дотепер</div>
+      <div class="edu-school" data-i18n="edu2_school">Харківський національний економічний університет ім. С. Кузнеця (ХНЕУ)</div>
+      <div class="edu-spec" data-i18n="edu2_spec">Інженерія програмного забезпечення — бакалаврат, навчаюсь зараз</div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="wrap" id="contact" style="border-bottom:none;">
+    <div class="cmd">contact --new</div>
+    <h2 data-i18n="contact_h2">Контакти</h2>
+    <div class="contact-links">
+      <a class="contact-link" href="https://t.me/d0n0ts1lly" target="_blank" rel="noopener">
+        <span>Telegram</span><span class="contact-link-label">@d0n0ts1lly ↗</span>
+      </a>
+      <a class="contact-link" href="mailto:ivanbadun14032007@gmail.com">
+        <span>Email</span><span class="contact-link-label">ivanbadun14032007@gmail.com</span>
+      </a>
+      <a class="contact-link" href="tel:+380660184070">
+        <span data-i18n="contact_phone_label">Телефон</span><span class="contact-link-label">+380 66 018 4070</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div data-i18n="footer_copy">© 2026 Іван Бадун</div>
+  <div data-i18n-html="footer_made">зроблено з <span style="color:var(--accent);">$</span> і кавою</div>
+</footer>
+
+<script>
+  // ---------- mobile nav ----------
+  const toggle = document.getElementById('navToggle');
+  const menu = document.getElementById('navMenu');
+  toggle.addEventListener('click', () => {
+    const isOpen = menu.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', isOpen);
+  });
+  document.querySelectorAll('#navMenu a').forEach(link => {
+    link.addEventListener('click', () => {
+      menu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // ---------- i18n (uk default, ru toggle) ----------
+  const translations = {
+    nav_toggle: { uk: "Відкрити меню", ru: "Открыть меню" },
+    nav_about: { uk: "про мене", ru: "о себе" },
+    nav_experience: { uk: "досвід", ru: "опыт" },
+    nav_skills: { uk: "навички", ru: "навыки" },
+    nav_projects: { uk: "проєкти", ru: "проекты" },
+    nav_education: { uk: "освіта", ru: "образование" },
+    nav_contact: { uk: "контакти", ru: "контакты" },
+
+    hero_role: { uk: "веб-розробник", ru: "веб-разработчик" },
+    hero_lede: {
+      uk: "Розробляю сайти на Python/Flask близько року: від каталогів з автопарсингом даних до інтернет-магазинів з адмін-панеллю. Люблю писати парсери та автоматизувати рутину.",
+      ru: "Разрабатываю сайты на Python/Flask около года: от каталогов с автопарсингом данных до интернет-магазинов с админ-панелью. Люблю писать парсеры и автоматизировать рутину."
+    },
+    btn_view_projects: { uk: "Дивитися проєкти", ru: "Смотреть проекты" },
+    btn_write_me: { uk: "Написати мені", ru: "Написать мне" },
+
+    about_h2: { uk: "Про мене", ru: "О себе" },
+    about_p1: {
+      uk: "Мене звати <strong>Іван</strong>, я веб-розробник з Харкова. Уже близько року пишу комерційні проєкти на <strong>Python/Flask</strong> — від односторінкових магазинів до сайтів з каталогами, які самі поповнюються даними.",
+      ru: "Меня зовут <strong>Иван</strong>, я веб-разработчик из Харькова. Уже около года пишу коммерческие проекты на <strong>Python/Flask</strong> — от одностраничных магазинов до сайтов с каталогами, которые сами пополняются данными."
+    },
+    about_p2: {
+      uk: "Також маю досвід роботи з <strong>WordPress</strong> — робив сайти як вручну, так і через Elementor.",
+      ru: "Также имею опыт работы с <strong>WordPress</strong> — делал сайты как вручную, так и через Elementor."
+    },
+    about_p3: {
+      uk: "Окремо люблю задачі на автоматизацію: писати парсери (<strong>BeautifulSoup4, Selenium</strong>) і поєднувати різні системи між собою через API.",
+      ru: "Отдельно люблю задачи на автоматизацию: писать парсеры (<strong>BeautifulSoup4, Selenium</strong>) и связывать разные системы между собой через API."
+    },
+    about_p4: {
+      uk: "Зараз продовжую рости як full-stack розробник: паралельно з комерційними проєктами навчаюсь за напрямом інженерії програмного забезпечення.",
+      ru: "Сейчас продолжаю расти как full-stack разработчик: параллельно с коммерческими проектами учусь на инженерии программного обеспечения."
+    },
+
+    fact_location_label: { uk: "Локація", ru: "Локация" },
+    fact_location_value: { uk: "Харків, Україна", ru: "Харьков, Украина" },
+    fact_age_label: { uk: "Вік", ru: "Возраст" },
+    fact_age_value: { uk: "19 років", ru: "19 лет" },
+    fact_exp_label: { uk: "Досвід (Flask)", ru: "Опыт (Flask)" },
+    fact_exp_value: { uk: "~1 рік", ru: "~1 год" },
+    fact_stack_label: { uk: "Стек", ru: "Стек" },
+    fact_status_label: { uk: "Статус", ru: "Статус" },
+    fact_status_value: { uk: "Відкритий до пропозицій", ru: "Открыт к предложениям" },
+
+    experience_h2: { uk: "Досвід роботи", ru: "Опыт работы" },
+    exp1_period: { uk: "~1 рік", ru: "~1 год" },
+    exp1_role: { uk: "Python / Flask розробник", ru: "Python / Flask разработчик" },
+    exp1_org: { uk: "Комерційні проєкти", ru: "Коммерческие проекты" },
+    exp1_desc: {
+      uk: "Розробка сайтів на Python/Flask під ключ: каталоги товарів та автомобілів, інтернет-магазини, інтеграція із зовнішніми API, написання парсерів для автоматичного збору та оновлення даних, робота з MySQL.",
+      ru: "Разработка сайтов на Python/Flask под ключ: каталоги товаров и автомобилей, интернет-магазины, интеграция с внешними API, написание парсеров для автоматического сбора и обновления данных, работа с MySQL."
+    },
+    exp2_period: { uk: "~6 місяців, дотепер", ru: "~6 месяцев, по настоящее время" },
+    exp2_role: { uk: "WordPress розробник", ru: "WordPress разработчик" },
+    exp2_org: { uk: "Комерційні проєкти", ru: "Коммерческие проекты" },
+    exp2_desc: {
+      uk: "Розробка сайтів на WordPress: як вручну (кастомна верстка, PHP-шаблони), так і за допомогою конструктора Elementor.",
+      ru: "Разработка сайтов на WordPress: как вручную (кастомная вёрстка, PHP-шаблоны), так и с помощью конструктора Elementor."
+    },
+
+    skills_h2: { uk: "Навички", ru: "Навыки" },
+    skill_group_backend: { uk: "Бекенд", ru: "Бэкенд" },
+    skill_group_frontend: { uk: "Фронтенд", ru: "Фронтенд" },
+    skill_group_cms: { uk: "CMS", ru: "CMS" },
+    skill_group_automation: { uk: "Автоматизація", ru: "Автоматизация" },
+    skill_group_tools: { uk: "Інструменти", ru: "Инструменты" },
+    chip_parsing: { uk: "Парсинг даних", ru: "Парсинг данных" },
+    chip_api: { uk: "API-інтеграції", ru: "API-интеграции" },
+
+    projects_h2: { uk: "Проєкти", ru: "Проекты" },
+    proj_bwauto_desc: {
+      uk: "Каталог автомобілів, який автоматично поповнюється даними через власний парсер. Калькулятори на Vue.js, гнучка фільтрація авто за параметрами, а також вбудований магазин автозапчастин на MySQL з інтеграцією API стороннього магазину.",
+      ru: "Каталог автомобилей, который автоматически пополняется данными через собственный парсер. Калькуляторы на Vue.js, гибкая фильтрация авто по параметрам, а также встроенный магазин автозапчастей на MySQL с интеграцией API стороннего магазина."
+    },
+    tag_parser: { uk: "Парсер", ru: "Парсер" },
+    proj_tochmed_desc: {
+      uk: "Односторінковий інтернет-магазин з фіксованим каталогом товарів. Побудований на чистому HTML, CSS та JavaScript — без бази даних, легкий і швидкий.",
+      ru: "Одностраничный интернет-магазин с фиксированным каталогом товаров. Построен на чистом HTML, CSS и JavaScript — без базы данных, лёгкий и быстрый."
+    },
+    proj_originalbrands_desc: {
+      uk: "Повноцінний інтернет-магазин з власною адмін-панеллю: керування товарами, замовленнями та контентом сайту без звернення до розробника.",
+      ru: "Полноценный интернет-магазин с собственной админ-панелью: управление товарами, заказами и контентом сайта без обращения к разработчику."
+    },
+    proj_bestmed_desc: {
+      uk: "Новий проєкт у розробці на Python/Flask + MySQL. Посилання з'явиться після запуску.",
+      ru: "Новый проект в разработке на Python/Flask + MySQL. Ссылка появится после запуска."
+    },
+
+    education_h2: { uk: "Освіта", ru: "Образование" },
+    edu1_period: { uk: "вересень 2022 — 2026", ru: "сентябрь 2022 — 2026" },
+    edu1_spec: {
+      uk: "Диплом фахового молодшого бакалавра — Інженерія програмного забезпечення",
+      ru: "Диплом младшего бакалавра — Инженерия программного обеспечения"
+    },
+    edu2_period: { uk: "2026 — дотепер", ru: "2026 — н.в." },
+    edu2_school: {
+      uk: "Харківський національний економічний університет ім. С. Кузнеця (ХНЕУ)",
+      ru: "Харьковский национальный экономический университет им. С. Кузнеца (ХНЭУ)"
+    },
+    edu2_spec: {
+      uk: "Інженерія програмного забезпечення — бакалаврат, навчаюсь зараз",
+      ru: "Инженерия программного обеспечения — бакалавриат, обучаюсь в настоящее время"
+    },
+
+    contact_h2: { uk: "Контакти", ru: "Контакты" },
+    contact_phone_label: { uk: "Телефон", ru: "Телефон" },
+
+    footer_copy: { uk: "© 2026 Іван Бадун", ru: "© 2026 Иван Бадун" },
+    footer_made: {
+      uk: "зроблено з <span style=\"color:var(--accent);\">$</span> і кавою",
+      ru: "сделано с <span style=\"color:var(--accent);\">$</span> и кофе"
+    }
+  };
+
+  function setLang(lang){
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if(translations[key]) el.textContent = translations[key][lang];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n-html');
+      if(translations[key]) el.innerHTML = translations[key][lang];
+    });
+    document.querySelectorAll('[data-i18n-attr]').forEach(el => {
+      const [attr, key] = el.getAttribute('data-i18n-attr').split(':');
+      if(translations[key]) el.setAttribute(attr, translations[key][lang]);
+    });
+
+    document.getElementById('langUk').classList.toggle('active', lang === 'uk');
+    document.getElementById('langRu').classList.toggle('active', lang === 'ru');
+  }
+
+  document.getElementById('langUk').addEventListener('click', () => setLang('uk'));
+  document.getElementById('langRu').addEventListener('click', () => setLang('ru'));
+</script>
+
+</body>
+</html>
