@@ -18,7 +18,7 @@
  * Цю адресу треба вставити в index.html у змінну FORM_ENDPOINT.
  */
 
-// Замініть на адресу вашого сайту на GitHub Pages — тільки з неї будуть прийматись запити.
+// Тільки з цього джерела прийматимуться запити (ваш сайт на GitHub Pages).
 const ALLOWED_ORIGIN = "https://d0n0ts1lly.github.io";
 
 export default {
