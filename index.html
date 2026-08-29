@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Badun.dev — розробка сайтів під ключ</title>
-<meta name="description" content="Розробка сайтів під ключ: лендінги, інтернет-магазини, корпоративні сайти, автоматизація. Python/Flask, WordPress, MySQL.">
+<title>WebPulse — розробка сайтів під ключ</title>
+<meta name="description" content="Розробка сайтів під ключ: лендінги, інтернет-магазини, корпоративні сайти, автоматизація. Python/Flask, MySQL, інтеграції з Nova Poshta, LiqPay, MonoPay.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -119,28 +119,35 @@
   .tint-alt{background:linear-gradient(180deg, var(--accent-soft) 0%, var(--bg) 100%);}
 
   /* ---------- HERO ---------- */
-  .hero{padding:168px 0 100px;}
-  .hero-grid{display:grid; grid-template-columns:1fr; gap:56px; align-items:center;}
-  .hero-eyebrow{
-    display:inline-flex; align-items:center; gap:8px;
-    font-family:var(--mono); font-size:12.5px; color:var(--accent);
-    background:var(--accent-soft); border:1px solid var(--accent-soft-2);
-    padding:7px 14px; border-radius:999px; margin-bottom:24px;
+  .hero{
+    padding:200px 0 120px;
+    position:relative;
+    isolation:isolate;
+    overflow:hidden;
+    text-align:center;
   }
-  .dot-live{width:7px; height:7px; border-radius:50%; background:var(--accent); animation:pulse 1.6s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+  .hero-bg{
+    position:absolute; inset:0; z-index:-1;
+    background-image:
+      linear-gradient(180deg, rgba(252,250,255,0.55) 0%, rgba(252,250,255,0.93) 68%, var(--bg) 100%),
+      url('https://images.unsplash.com/photo-1751257983922-a627088d4c21?fm=jpg&q=70&w=2200&auto=format&fit=crop');
+    background-size:cover;
+    background-position:center;
+  }
+  .hero-grid{display:flex; flex-direction:column; align-items:center; gap:0;}
 
   h1{font-size:clamp(38px,6.4vw,64px); font-weight:800; line-height:1.06; margin-bottom:22px;}
   h1 .accent{color:var(--accent);}
-  .hero-sub{font-size:18px; color:var(--muted); max-width:540px; margin-bottom:36px;}
-  .hero-actions{display:flex; flex-wrap:wrap; gap:14px; margin-bottom:44px;}
+  .hero-sub{font-size:18px; color:var(--muted); max-width:560px; margin-bottom:36px;}
+  .hero-actions{display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-bottom:40px;}
   .hero-trust{
-    display:flex; flex-wrap:wrap; gap:10px 22px;
+    display:flex; flex-wrap:wrap; justify-content:center; gap:10px 22px;
     font-family:var(--mono); font-size:12.5px; color:var(--muted);
+    margin-bottom:56px;
   }
   .hero-trust span::before{content:"— "; color:var(--accent);}
 
-  .hero-browser{max-width:640px; margin:0 auto;}
+  .hero-browser{max-width:640px; width:100%; margin:0 auto;}
   .hero-browser-body{padding:44px 32px; text-align:center;}
   .type-line{
     font-family:var(--display); font-weight:800; font-size:clamp(22px,3.4vw,30px);
@@ -164,6 +171,7 @@
     transition:transform .18s ease, box-shadow .18s ease;
   }
   .service-card:hover{transform:translateY(-4px); box-shadow:0 24px 44px -24px rgba(124,92,252,0.35);}
+  .service-card--wide{grid-column:1 / -1;}
   .service-icon{
     width:46px; height:46px; border-radius:12px; background:var(--accent-soft);
     display:flex; align-items:center; justify-content:center;
@@ -171,8 +179,11 @@
   }
   .service-card h3{font-size:19px; font-weight:700;}
   .service-card p{color:var(--muted); font-size:14.5px;}
+  .service-integrations{
+    font-family:var(--mono); font-size:12px; color:var(--accent);
+  }
   .service-foot{
-    display:flex; justify-content:space-between; align-items:center;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;
     margin-top:auto; padding-top:14px; border-top:1px solid var(--border);
   }
   .service-price{font-family:var(--mono); font-size:13px; color:var(--ink); font-weight:600;}
@@ -230,12 +241,26 @@
 
   form{display:flex; flex-direction:column; gap:14px;}
   .field label{font-size:13px; font-weight:600; color:var(--muted); display:block; margin-bottom:6px;}
+
   input, textarea, select{
     width:100%; font-family:var(--body); font-size:14.5px; padding:12px 14px;
     border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--ink);
   }
   input:focus, textarea:focus, select:focus{border-color:var(--accent);}
   textarea{min-height:100px; resize:vertical;}
+
+  select{
+    appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1L6 6L11 1' stroke='%236E6785' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 14px center;
+    padding-right:38px;
+    cursor:pointer;
+  }
+  select:focus{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1L6 6L11 1' stroke='%237C5CFC' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  }
+
   .hp{position:absolute; left:-9999px; opacity:0;}
   .form-status{font-size:13.5px; min-height:20px; font-weight:600;}
   .form-status.ok{color:#1F9D55;}
@@ -252,7 +277,7 @@
 
 <header>
   <div class="nav-inner">
-    <div class="logo">Badun<span>.dev</span></div>
+    <div class="logo">Web<span>Pulse</span></div>
     <button class="nav-toggle" id="navToggle" aria-label="Відкрити меню" aria-expanded="false">≡</button>
     <nav id="navMenu">
       <ul>
@@ -273,22 +298,20 @@
 
   <!-- HERO -->
   <section class="hero">
+    <div class="hero-bg"></div>
     <div class="wrap hero-grid">
-      <div>
-        <div class="hero-eyebrow"><span class="dot-live"></span> відкритий для нових проєктів</div>
-        <h1>Сайт, який <span class="accent">продає</span>,<br>а не просто існує</h1>
-        <p class="hero-sub">Розробляю лендінги, інтернет-магазини та корпоративні сайти під ключ — від макету до запуску. Python/Flask, WordPress, власна адмін-панель, автоматизація рутини.</p>
-        <div class="hero-actions">
-          <a href="#contact" class="btn btn-primary">Обговорити проєкт</a>
-          <a href="#portfolio" class="btn btn-ghost">Переглянути роботи</a>
-        </div>
-        <div class="hero-trust">
-          <span>Python / Flask</span>
-          <span>WordPress</span>
-          <span>MySQL</span>
-          <span>Адмін-панелі</span>
-          <span>Telegram-боти</span>
-        </div>
+      <h1>Сайт, який <span class="accent">продає</span>,<br>а не просто існує</h1>
+      <p class="hero-sub">Розробляю лендінги, інтернет-магазини та корпоративні сайти під ключ — від макету до запуску. Python/Flask, MySQL, власна адмін-панель, автоматизація рутини.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">Обговорити проєкт</a>
+        <a href="#portfolio" class="btn btn-ghost">Переглянути роботи</a>
+      </div>
+      <div class="hero-trust">
+        <span>Python / Flask</span>
+        <span>MySQL</span>
+        <span>Адмін-панелі</span>
+        <span>Telegram-боти</span>
+        <span>Nova Poshta API</span>
       </div>
 
       <div class="hero-browser browser-frame">
@@ -311,7 +334,7 @@
     <div class="wrap">
       <div class="eyebrow">Послуги</div>
       <h2 class="section-title">Що я роблю</h2>
-      <p class="section-lede">Від простого одностраничника до магазину з власною адмін-панеллю. Кожен проєкт — під конкретну задачу бізнесу, без зайвого.</p>
+      <p class="section-lede">Від простого одностраничника до магазину з власною адмін-панеллю та підключеними платежами. Ціни орієнтовні — точну вартість називаю після короткого брифу.</p>
       <div class="service-grid">
 
         <div class="service-card">
@@ -319,7 +342,7 @@
           <h3>Лендінг / сайт-візитка</h3>
           <p>Односторінковий сайт під конкретну пропозицію: акція, послуга, захід. Швидкий запуск, адаптивна вёрстка, форма заявки.</p>
           <div class="service-foot">
-            <span class="service-price">від ₴6 000 <small>/ 1–2 тижні</small></span>
+            <span class="service-price">$150 · ₴6 690 <small>/ 1–2 тижні</small></span>
           </div>
         </div>
 
@@ -327,17 +350,18 @@
           <div class="service-icon">02</div>
           <h3>Інтернет-магазин</h3>
           <p>Каталог товарів, кошик, оформлення замовлення, власна адмін-панель для керування товарами та цінами без розробника.</p>
+          <p class="service-integrations">Інтеграції: Nova Poshta API, LiqPay, MonoPay та інші сервіси</p>
           <div class="service-foot">
-            <span class="service-price">від ₴20 000 <small>/ 3–5 тижнів</small></span>
+            <span class="service-price">від $350 · ₴15 610 <small>/ 3–5 тижнів, є додаткові функції</small></span>
           </div>
         </div>
 
         <div class="service-card">
           <div class="service-icon">03</div>
           <h3>Корпоративний сайт</h3>
-          <p>Багатосторінковий сайт компанії на WordPress: вручну або через Elementor, з зручним редагуванням контенту.</p>
+          <p>Багатосторінковий сайт компанії: продумана структура розділів і зручне керування контентом без залучення розробника на кожну правку.</p>
           <div class="service-foot">
-            <span class="service-price">від ₴12 000 <small>/ 2–3 тижні</small></span>
+            <span class="service-price">за індивідуальним розрахунком</span>
           </div>
         </div>
 
@@ -347,6 +371,15 @@
           <p>Парсери для збору та оновлення даних, Telegram-боти, інтеграція сайту із зовнішніми API та сервісами.</p>
           <div class="service-foot">
             <span class="service-price">за запитом</span>
+          </div>
+        </div>
+
+        <div class="service-card service-card--wide">
+          <div class="service-icon">05</div>
+          <h3>Підтримка сайту</h3>
+          <p>Технічна підтримка вже готового сайту: правки контенту, моніторинг роботи, дрібні доробки та консультації.</p>
+          <div class="service-foot">
+            <span class="service-price">від $40 · ₴1 780 <small>/ місяць, залежить від сайту</small></span>
           </div>
         </div>
 
@@ -467,8 +500,6 @@
         <span class="stack-chip">Python</span>
         <span class="stack-chip">Flask</span>
         <span class="stack-chip">MySQL</span>
-        <span class="stack-chip">WordPress</span>
-        <span class="stack-chip">Elementor</span>
         <span class="stack-chip">HTML / CSS / JS</span>
         <span class="stack-chip">Vue.js</span>
         <span class="stack-chip">React</span>
@@ -476,6 +507,9 @@
         <span class="stack-chip">Foundation</span>
         <span class="stack-chip">BeautifulSoup4 / Selenium</span>
         <span class="stack-chip">Telegram-боти</span>
+        <span class="stack-chip">Nova Poshta API</span>
+        <span class="stack-chip">LiqPay</span>
+        <span class="stack-chip">MonoPay</span>
         <span class="stack-chip">REST API</span>
         <span class="stack-chip">Git</span>
       </div>
@@ -515,6 +549,7 @@
               <option>Інтернет-магазин</option>
               <option>Корпоративний сайт</option>
               <option>Автоматизація / бот / парсер</option>
+              <option>Підтримка сайту</option>
               <option>Ще не визначився(лась)</option>
             </select>
           </div>
@@ -533,7 +568,7 @@
 
 <footer>
   <div class="wrap footer-inner">
-    <div>© 2026 Іван Бадун — Badun.dev</div>
+    <div>© 2026 WebPulse</div>
     <div><a href="https://t.me/d0n0ts1lly" target="_blank" rel="noopener">Написати в Telegram ↗</a></div>
   </div>
 </footer>
@@ -590,7 +625,7 @@
   // GitHub Secrets, відправляє повідомлення в Telegram. Bot-токен ніде тут
   // не зберігається — див. README.md.
   const GITHUB_OWNER = "YOUR-GITHUB-USERNAME";
-  const GITHUB_REPO = "badun-dev";
+  const GITHUB_REPO = "webpulse";
   // Fine-grained PAT з ЄДИНИМ правом: "Actions: Read and write" саме для
   // цього репозиторію. Так, він видимий у коді сторінки — це нормально
   // ТІЛЬКИ якщо в токена немає доступу ні до чого, крім запуску Action.
