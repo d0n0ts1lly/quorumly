@@ -827,7 +827,7 @@
               <h3>Лендінг / сайт-візитка</h3>
               <p>
                 Односторінковий сайт під конкретну пропозицію: акція, послуга,
-                захід. Швидкий запуск, адаптивна вёрстка, форма заявки.
+                захід. Швидкий запуск, адаптивна верстка, форма заявки.
               </p>
               <div class="service-foot">
                 <span class="service-price"
@@ -1208,7 +1208,8 @@
       // Форма шле дані на Cloudflare Worker — маленький бекенд, який приймає
       // заявку і сам пересилає її в Telegram. Токен бота зберігається лише
       // в секретах воркера, сюди ніколи не потрапляє — див. README.md.
-      const FORM_ENDPOINT = "https://d0n0ts1lly.workers.dev";
+      const FORM_ENDPOINT =
+        "https://webpulse-contact-form.d0n0ts1lly.workers.dev";
 
       const form = document.getElementById("orderForm");
       const status = document.getElementById("formStatus");
