@@ -1,686 +1,1262 @@
 <!DOCTYPE html>
 <html lang="uk">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WebPulse — розробка сайтів під ключ</title>
-<meta name="description" content="Розробка сайтів під ключ: лендінги, інтернет-магазини, корпоративні сайти, автоматизація. Python/Flask, MySQL, інтеграції з Nova Poshta, LiqPay, MonoPay.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#FCFAFF;
-    --surface:#FFFFFF;
-    --accent:#7C5CFC;
-    --accent-hover:#6A46F5;
-    --accent-soft:#F1ECFF;
-    --accent-soft-2:#E8E1FF;
-    --ink:#1E1B2E;
-    --muted:#6E6785;
-    --border:#E7E1FA;
-    --display:'Sora', sans-serif;
-    --body:'Manrope', sans-serif;
-    --mono:'IBM Plex Mono', monospace;
-  }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
-  @media (prefers-reduced-motion: reduce){
-    html{scroll-behavior:auto;}
-    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
-  }
-  body{background:var(--bg); color:var(--ink); font-family:var(--body); line-height:1.6; -webkit-font-smoothing:antialiased;}
-  a{color:inherit;}
-  ::selection{background:var(--accent); color:#fff;}
-  :focus-visible{outline:2px solid var(--accent); outline-offset:3px;}
-  img{max-width:100%; display:block;}
-
-  .wrap{max-width:1100px; margin:0 auto; padding:0 28px;}
-
-  h1,h2,h3{font-family:var(--display); letter-spacing:-0.01em;}
-
-  /* ---------- HEADER ---------- */
-  header{
-    position:fixed; top:0; left:0; right:0; z-index:100;
-    background:rgba(252,250,255,0.85); backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--border);
-  }
-  .nav-inner{max-width:1100px; margin:0 auto; padding:18px 28px; display:flex; align-items:center; justify-content:space-between; gap:16px;}
-  .logo{font-family:var(--display); font-weight:700; font-size:18px;}
-  .logo span{color:var(--accent);}
-  nav ul{list-style:none; display:flex; gap:30px;}
-  nav a{text-decoration:none; font-size:14px; font-weight:600; color:var(--muted); transition:color .15s ease;}
-  nav a:hover{color:var(--ink);}
-  .nav-cta{display:flex; align-items:center; gap:16px;}
-  .nav-toggle{display:none; background:none; border:1px solid var(--border); border-radius:8px; width:38px; height:38px; font-size:18px; cursor:pointer;}
-  @media (max-width:820px){
-    nav{
-      position:fixed; top:65px; left:0; right:0; background:var(--surface);
-      border-bottom:1px solid var(--border);
-      transform:translateY(-140%); transition:transform .25s ease;
-    }
-    nav.open{transform:translateY(0);}
-    nav ul{flex-direction:column; gap:0; padding:8px 0;}
-    nav a{display:block; padding:14px 28px; border-top:1px solid var(--border);}
-    .nav-cta{display:none;}
-    .nav-toggle{display:block; margin-left:auto;}
-  }
-
-  .btn{
-    display:inline-flex; align-items:center; gap:8px; padding:13px 24px; border-radius:12px;
-    font-weight:700; font-size:14.5px; text-decoration:none; border:1.5px solid transparent; cursor:pointer;
-    transition:all .15s ease; font-family:var(--body);
-  }
-  .btn-primary{background:var(--accent); color:#fff;}
-  .btn-primary:hover{background:var(--accent-hover); transform:translateY(-1px);}
-  .btn-ghost{border-color:var(--border); color:var(--ink); background:var(--surface);}
-  .btn-ghost:hover{border-color:var(--accent); color:var(--accent);}
-
-  /* ---------- BROWSER FRAME (signature element) ---------- */
-  .browser-frame{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:16px;
-    overflow:hidden;
-    box-shadow:0 30px 60px -20px rgba(124,92,252,0.25);
-  }
-  .browser-chrome{
-    display:flex; align-items:center; gap:10px;
-    padding:12px 16px;
-    background:var(--accent-soft);
-    border-bottom:1px solid var(--border);
-  }
-  .dots{display:flex; gap:6px;}
-  .dots span{width:9px; height:9px; border-radius:50%; background:#D9CFFB;}
-  .browser-url{
-    flex:1;
-    font-family:var(--mono);
-    font-size:12.5px;
-    color:var(--muted);
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:7px;
-    padding:6px 12px;
-    text-align:center;
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-  }
-
-  /* ---------- SECTION SHELL ---------- */
-  section{padding:150px 0;}
-  @media (max-width:680px){section{padding:96px 0;}}
-  .eyebrow{
-    font-family:var(--mono); font-size:12.5px; color:var(--accent);
-    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px; font-weight:600;
-  }
-  h2.section-title{font-size:clamp(28px,4vw,40px); font-weight:700; margin-bottom:18px;}
-  .section-lede{color:var(--muted); font-size:17px; max-width:560px; margin-bottom:56px;}
-
-  .tint{background:var(--accent-soft);}
-  .tint-alt{background:linear-gradient(180deg, var(--accent-soft) 0%, var(--bg) 100%);}
-
-  /* ---------- HERO ---------- */
-  .hero{
-    padding:200px 0 120px;
-    position:relative;
-    isolation:isolate;
-    overflow:hidden;
-    text-align:center;
-  }
-  .hero-bg{
-    position:absolute; inset:0; z-index:-1;
-    background-image:
-      linear-gradient(180deg, rgba(252,250,255,0.55) 0%, rgba(252,250,255,0.93) 68%, var(--bg) 100%),
-      url('https://images.unsplash.com/photo-1751257983922-a627088d4c21?fm=jpg&q=70&w=2200&auto=format&fit=crop');
-    background-size:cover;
-    background-position:center;
-  }
-  .hero-grid{display:flex; flex-direction:column; align-items:center; gap:0;}
-
-  h1{font-size:clamp(38px,6.4vw,64px); font-weight:800; line-height:1.06; margin-bottom:22px;}
-  h1 .accent{color:var(--accent);}
-  .hero-sub{font-size:18px; color:var(--muted); max-width:560px; margin-bottom:36px;}
-  .hero-actions{display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-bottom:40px;}
-  .hero-trust{
-    display:flex; flex-wrap:wrap; justify-content:center; gap:10px 22px;
-    font-family:var(--mono); font-size:12.5px; color:var(--muted);
-    margin-bottom:56px;
-  }
-  .hero-trust span::before{content:"— "; color:var(--accent);}
-
-  .hero-browser{max-width:640px; width:100%; margin:0 auto;}
-  .hero-browser-body{padding:44px 32px; text-align:center;}
-  .type-line{
-    font-family:var(--display); font-weight:800; font-size:clamp(22px,3.4vw,30px);
-    min-height:1.3em;
-  }
-  .type-cursor{display:inline-block; width:3px; height:1em; background:var(--accent); vertical-align:middle; margin-left:2px; animation:blink 1s steps(1) infinite;}
-  @keyframes blink{50%{opacity:0;}}
-  .hero-browser-tags{display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin-top:22px;}
-  .hero-browser-tags span{
-    font-family:var(--mono); font-size:11.5px; color:var(--accent);
-    background:var(--accent-soft); border:1px solid var(--accent-soft-2);
-    padding:5px 10px; border-radius:999px;
-  }
-
-  /* ---------- SERVICES ---------- */
-  .service-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:24px;}
-  @media (max-width:720px){.service-grid{grid-template-columns:1fr;}}
-  .service-card{
-    background:var(--surface); border:1px solid var(--border); border-radius:16px;
-    padding:32px; display:flex; flex-direction:column; gap:14px;
-    transition:transform .18s ease, box-shadow .18s ease;
-  }
-  .service-card:hover{transform:translateY(-4px); box-shadow:0 24px 44px -24px rgba(124,92,252,0.35);}
-  .service-card--wide{grid-column:1 / -1;}
-  .service-icon{
-    width:46px; height:46px; border-radius:12px; background:var(--accent-soft);
-    display:flex; align-items:center; justify-content:center;
-    font-family:var(--mono); font-weight:600; color:var(--accent); font-size:15px;
-  }
-  .service-card h3{font-size:19px; font-weight:700;}
-  .service-card p{color:var(--muted); font-size:14.5px;}
-  .service-integrations{
-    font-family:var(--mono); font-size:12px; color:var(--accent);
-  }
-  .service-foot{
-    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;
-    margin-top:auto; padding-top:14px; border-top:1px solid var(--border);
-  }
-  .service-price{font-family:var(--mono); font-size:13px; color:var(--ink); font-weight:600;}
-  .service-price small{color:var(--muted); font-weight:400;}
-
-  /* ---------- PROCESS ---------- */
-  .process-list{display:grid; grid-template-columns:repeat(4,1fr); gap:24px;}
-  @media (max-width:900px){.process-list{grid-template-columns:1fr 1fr;}}
-  @media (max-width:520px){.process-list{grid-template-columns:1fr;}}
-  .process-step{position:relative; padding-top:8px;}
-  .process-num{
-    font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700;
-    margin-bottom:14px; display:block;
-  }
-  .process-step h3{font-size:17px; font-weight:700; margin-bottom:8px;}
-  .process-step p{color:var(--muted); font-size:14px;}
-  .process-step:not(:last-child)::after{
-    content:"→";
-    position:absolute;
-    top:6px; right:-27px;
-    color:var(--accent);
-    font-family:var(--mono);
-    font-size:20px;
-    font-weight:600;
-  }
-  @media (max-width:900px){
-    .process-step:not(:last-child)::after{display:none;}
-  }
-
-  /* ---------- PORTFOLIO ---------- */
-  .portfolio-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:24px;}
-  @media (max-width:780px){.portfolio-grid{grid-template-columns:1fr;}}
-  .portfolio-card{text-decoration:none; color:inherit; display:block;}
-  .portfolio-body{padding:26px 24px;}
-  .portfolio-tag{
-    display:inline-block; font-family:var(--mono); font-size:11px; color:var(--accent);
-    background:var(--accent-soft); padding:4px 9px; border-radius:6px; margin-bottom:12px;
-  }
-  .portfolio-card h3{font-size:18px; font-weight:700; margin-bottom:8px;}
-  .portfolio-card p{color:var(--muted); font-size:14px; margin-bottom:14px;}
-  .portfolio-stack{display:flex; flex-wrap:wrap; gap:6px;}
-  .ptag{font-family:var(--mono); font-size:11px; color:var(--muted); background:var(--bg); border:1px solid var(--border); padding:3px 8px; border-radius:5px;}
-  .portfolio-status{font-family:var(--mono); font-size:11px; color:var(--accent);}
-
-  /* ---------- STACK ---------- */
-  .stack-cloud{display:flex; flex-wrap:wrap; gap:10px;}
-  .stack-chip{
-    font-family:var(--mono); font-size:13.5px; padding:9px 16px; border-radius:10px;
-    background:var(--surface); border:1px solid var(--border);
-  }
-
-  /* ---------- CONTACT ---------- */
-  .contact-shell{
-    background:var(--surface); border:1px solid var(--border); border-radius:20px;
-    padding:48px; display:grid; grid-template-columns:1fr 1fr; gap:48px;
-  }
-  @media (max-width:780px){.contact-shell{grid-template-columns:1fr; padding:32px 24px;}}
-  .contact-info h3{font-size:22px; font-weight:700; margin-bottom:14px;}
-  .contact-info p{color:var(--muted); font-size:15px; margin-bottom:28px;}
-  .contact-direct{display:flex; flex-direction:column; gap:2px;}
-  .contact-direct a{
-    display:flex; justify-content:space-between; padding:14px 0; text-decoration:none;
-    border-bottom:1px solid var(--border); font-size:14.5px; font-weight:600;
-  }
-  .contact-direct a:first-child{border-top:1px solid var(--border);}
-  .contact-direct a span:last-child{color:var(--muted); font-weight:400; font-family:var(--mono); font-size:13px;}
-
-  form{display:flex; flex-direction:column; gap:14px;}
-  .field label{font-size:13px; font-weight:600; color:var(--muted); display:block; margin-bottom:6px;}
-
-  input, textarea, select{
-    width:100%; font-family:var(--body); font-size:14.5px; padding:12px 14px;
-    border:1.5px solid var(--border); border-radius:10px; background:var(--bg); color:var(--ink);
-  }
-  input:focus, textarea:focus, select:focus{border-color:var(--accent);}
-  textarea{min-height:100px; resize:vertical;}
-
-  select{
-    appearance:none; -webkit-appearance:none; -moz-appearance:none;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1L6 6L11 1' stroke='%236E6785' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-    background-repeat:no-repeat;
-    background-position:right 14px center;
-    padding-right:38px;
-    cursor:pointer;
-  }
-  select:focus{
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1L6 6L11 1' stroke='%237C5CFC' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-  }
-
-  .hp{position:absolute; left:-9999px; opacity:0;}
-  .form-status{font-size:13.5px; min-height:20px; font-weight:600;}
-  .form-status.ok{color:#1F9D55;}
-  .form-status.err{color:#E14848;}
-
-  /* ---------- FOOTER ---------- */
-  footer{border-top:1px solid var(--border); padding:36px 0;}
-  .footer-inner{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;}
-  .footer-inner{font-size:13.5px; color:var(--muted);}
-  .footer-inner a{text-decoration:none; font-weight:600; color:var(--ink);}
-</style>
-</head>
-<body>
-
-<header>
-  <div class="nav-inner">
-    <div class="logo">Web<span>Pulse</span></div>
-    <nav id="navMenu">
-      <ul>
-        <li><a href="#services">Послуги</a></li>
-        <li><a href="#process">Як працюємо</a></li>
-        <li><a href="#portfolio">Роботи</a></li>
-        <li><a href="#stack">Технології</a></li>
-        <li><a href="#contact">Контакти</a></li>
-      </ul>
-    </nav>
-    <div class="nav-cta">
-      <a href="#contact" class="btn btn-primary">Замовити сайт</a>
-    </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Відкрити меню" aria-expanded="false">≡</button>
-  </div>
-</header>
-
-<main>
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="wrap hero-grid">
-      <h1>Сайт, який <span class="accent">продає</span>,<br>а не просто існує</h1>
-      <p class="hero-sub">Розробляю лендінги, інтернет-магазини та корпоративні сайти під ключ — від макету до запуску.</p>
-      <div class="hero-actions">
-        <a href="#contact" class="btn btn-primary">Обговорити проєкт</a>
-        <a href="#portfolio" class="btn btn-ghost">Переглянути роботи</a>
-      </div>
-      <div class="hero-trust">
-        <span>Python / Flask</span>
-        <span>MySQL</span>
-        <span>Адмін-панелі</span>
-        <span>Telegram-боти</span>
-        <span>Nova Poshta API</span>
-      </div>
-
-      <div class="hero-browser browser-frame">
-        <div class="browser-chrome">
-          <div class="dots"><span></span><span></span><span></span></div>
-          <div class="browser-url">ваш-бізнес.com.ua</div>
-        </div>
-        <div class="hero-browser-body">
-          <div class="type-line" id="typeLine"><span class="type-cursor"></span></div>
-          <div class="hero-browser-tags">
-            <span>Лендінг</span><span>Інтернет-магазин</span><span>Корпоративний сайт</span><span>Автоматизація</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SERVICES -->
-  <section class="tint" id="services">
-    <div class="wrap">
-      <div class="eyebrow">Послуги</div>
-      <h2 class="section-title">Що я роблю</h2>
-      <p class="section-lede">Від простого одностраничника до магазину з власною адмін-панеллю та підключеними платежами. Ціни орієнтовні — точну вартість називаю після короткого брифу.</p>
-      <div class="service-grid">
-
-        <div class="service-card">
-          <div class="service-icon">01</div>
-          <h3>Лендінг / сайт-візитка</h3>
-          <p>Односторінковий сайт під конкретну пропозицію: акція, послуга, захід. Швидкий запуск, адаптивна вёрстка, форма заявки.</p>
-          <div class="service-foot">
-            <span class="service-price">$150 · ₴6 690 <small>/ 1–2 тижні</small></span>
-          </div>
-        </div>
-
-        <div class="service-card">
-          <div class="service-icon">02</div>
-          <h3>Інтернет-магазин</h3>
-          <p>Каталог товарів, кошик, оформлення замовлення, власна адмін-панель для керування товарами та цінами без розробника.</p>
-          <div class="service-foot">
-            <span class="service-price">від $350 · ₴15 610 <small>/ 3–5 тижнів, є додаткові функції</small></span>
-          </div>
-        </div>
-
-        <div class="service-card">
-          <div class="service-icon">03</div>
-          <h3>Корпоративний сайт</h3>
-          <p>Багатосторінковий сайт компанії: продумана структура розділів і зручне керування контентом без залучення розробника на кожну правку.</p>
-          <div class="service-foot">
-            <span class="service-price">за індивідуальним розрахунком</span>
-          </div>
-        </div>
-
-        <div class="service-card">
-          <div class="service-icon">04</div>
-          <h3>Автоматизація</h3>
-          <p>Парсери для збору та оновлення даних, Telegram-боти, інтеграція сайту із зовнішніми API та сервісами.</p>
-          <div class="service-foot">
-            <span class="service-price">за запитом</span>
-          </div>
-        </div>
-
-        <div class="service-card service-card--wide">
-          <div class="service-icon">05</div>
-          <h3>Підтримка сайту</h3>
-          <p>Технічна підтримка вже готового сайту: правки контенту, моніторинг роботи, дрібні доробки та консультації.</p>
-          <div class="service-foot">
-            <span class="service-price">від $35 · ₴1 561 <small>/ місяць, залежить від сайту</small></span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- PROCESS -->
-  <section id="process">
-    <div class="wrap">
-      <div class="eyebrow">Процес</div>
-      <h2 class="section-title">Як ми працюємо</h2>
-      <p class="section-lede">Чотири кроки від заявки до сайту, який уже приносить заявки вам.</p>
-      <div class="process-list">
-        <div class="process-step">
-          <span class="process-num">01</span>
-          <h3>Заявка</h3>
-          <p>Пишете в формі нижче або в Telegram — обговорюємо задачу і формат сайту.</p>
-        </div>
-        <div class="process-step">
-          <span class="process-num">02</span>
-          <h3>Бриф і оцінка</h3>
-          <p>Уточнюю деталі, структуру сайту, називаю строки та вартість.</p>
-        </div>
-        <div class="process-step">
-          <span class="process-num">03</span>
-          <h3>Розробка</h3>
-          <p>Роблю сайт, показую проміжні версії, вношу правки за вашими коментарями.</p>
-        </div>
-        <div class="process-step">
-          <span class="process-num">04</span>
-          <h3>Запуск</h3>
-          <p>Переносимо сайт на хостинг, перевіряємо все і за потреби супроводжую далі.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PORTFOLIO -->
-  <section class="tint-alt" id="portfolio">
-    <div class="wrap">
-      <div class="eyebrow">Приклади робіт</div>
-      <h2 class="section-title">Реалізовані проєкти</h2>
-      <p class="section-lede">Кілька сайтів, які вже працюють і приносять клієнтам заявки та продажі.</p>
-      <div class="portfolio-grid">
-
-        <a class="portfolio-card browser-frame" href="https://www.bwauto.com.ua" target="_blank" rel="noopener">
-          <div class="browser-chrome">
-            <div class="dots"><span></span><span></span><span></span></div>
-            <div class="browser-url">bwauto.com.ua</div>
-          </div>
-          <div class="portfolio-body">
-            <span class="portfolio-tag">Каталог + магазин</span>
-            <h3>BW Auto</h3>
-            <p>Каталог автомобілів з автоматичним поповненням через власний парсер, калькулятори на Vue.js, вбудований магазин автозапчастин.</p>
-            <div class="portfolio-stack">
-              <span class="ptag">Flask</span><span class="ptag">Vue.js</span><span class="ptag">MySQL</span><span class="ptag">Парсер</span>
-            </div>
-          </div>
-        </a>
-
-        <a class="portfolio-card browser-frame" href="https://www.originalbrands.com.ua" target="_blank" rel="noopener">
-          <div class="browser-chrome">
-            <div class="dots"><span></span><span></span><span></span></div>
-            <div class="browser-url">originalbrands.com.ua</div>
-          </div>
-          <div class="portfolio-body">
-            <span class="portfolio-tag">Магазин + адмінка</span>
-            <h3>Original Brands</h3>
-            <p>Повноцінний інтернет-магазин з власною адмін-панеллю: керування товарами, замовленнями та контентом.</p>
-            <div class="portfolio-stack">
-              <span class="ptag">Flask</span><span class="ptag">MySQL</span><span class="ptag">Admin panel</span>
-            </div>
-          </div>
-        </a>
-
-        <a class="portfolio-card browser-frame" href="https://tochmed.com.ua" target="_blank" rel="noopener">
-          <div class="browser-chrome">
-            <div class="dots"><span></span><span></span><span></span></div>
-            <div class="browser-url">tochmed.com.ua</div>
-          </div>
-          <div class="portfolio-body">
-            <span class="portfolio-tag">Односторінковий магазин</span>
-            <h3>Tochmed</h3>
-            <p>Легкий магазин з фіксованим каталогом на чистому HTML/CSS/JS — без бази даних, швидкий і простий.</p>
-            <div class="portfolio-stack">
-              <span class="ptag">HTML</span><span class="ptag">CSS</span><span class="ptag">JavaScript</span>
-            </div>
-          </div>
-        </a>
-
-        <div class="portfolio-card browser-frame">
-          <div class="browser-chrome">
-            <div class="dots"><span></span><span></span><span></span></div>
-            <div class="browser-url">bestmed — у розробці</div>
-          </div>
-          <div class="portfolio-body">
-            <span class="portfolio-tag">У розробці</span>
-            <h3>BestMed</h3>
-            <p>Новий проєкт на Python/Flask + MySQL. Посилання з'явиться після запуску.</p>
-            <div class="portfolio-stack">
-              <span class="ptag">Flask</span><span class="ptag">MySQL</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- STACK -->
-  <section id="stack">
-    <div class="wrap">
-      <div class="eyebrow">Технології</div>
-      <h2 class="section-title">Чим це зроблено</h2>
-      <p class="section-lede">Стек підбираю під задачу, а не навпаки — тому список трохи ширший, ніж в одному проєкті.</p>
-      <div class="stack-cloud">
-        <span class="stack-chip">Python</span>
-        <span class="stack-chip">Flask</span>
-        <span class="stack-chip">MySQL</span>
-        <span class="stack-chip">HTML / CSS / JS</span>
-        <span class="stack-chip">Vue.js</span>
-        <span class="stack-chip">React</span>
-        <span class="stack-chip">Bootstrap</span>
-        <span class="stack-chip">Foundation</span>
-        <span class="stack-chip">BeautifulSoup4 / Selenium</span>
-        <span class="stack-chip">Telegram-боти</span>
-        <span class="stack-chip">Nova Poshta API</span>
-        <span class="stack-chip">LiqPay</span>
-        <span class="stack-chip">MonoPay</span>
-        <span class="stack-chip">REST API</span>
-        <span class="stack-chip">Git</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="tint" id="contact">
-    <div class="wrap">
-      <div class="eyebrow">Контакти</div>
-      <h2 class="section-title">Замовити сайт</h2>
-      <div class="contact-shell">
-        <div class="contact-info">
-          <h3>Розкажіть про задачу</h3>
-          <p>Заповніть форму — повідомлення одразу прийде мені в Telegram, відповідаю зазвичай протягом дня. Або напишіть напряму:</p>
-          <div class="contact-direct">
-            <a href="https://t.me/d0n0ts1lly" target="_blank" rel="noopener"><span>Telegram</span><span>@d0n0ts1lly</span></a>
-            <a href="mailto:ivanbadun14032007@gmail.com"><span>Email</span><span>ivanbadun14032007@gmail.com</span></a>
-            <a href="tel:+380660184070"><span>Телефон</span><span>+380 66 018 4070</span></a>
-          </div>
-        </div>
-
-        <form id="orderForm">
-          <input type="text" name="_hp" class="hp" tabindex="-1" autocomplete="off">
-          <div class="field">
-            <label for="name">Ім'я</label>
-            <input id="name" name="name" type="text" required>
-          </div>
-          <div class="field">
-            <label for="contact">Telegram, телефон або email</label>
-            <input id="contact" name="contact" type="text" required>
-          </div>
-          <div class="field">
-            <label for="service">Що потрібно</label>
-            <select id="service" name="service">
-              <option>Лендінг / сайт-візитка</option>
-              <option>Інтернет-магазин</option>
-              <option>Корпоративний сайт</option>
-              <option>Автоматизація / бот / парсер</option>
-              <option>Підтримка сайту</option>
-              <option>Ще не визначився(лась)</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="message">Коротко про задачу</label>
-            <textarea id="message" name="message" required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary" id="submitBtn">Надіслати заявку</button>
-          <div class="form-status" id="formStatus"></div>
-        </form>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<footer>
-  <div class="wrap footer-inner">
-    <div>© 2026 WebPulse</div>
-    <div><a href="https://t.me/d0n0ts1lly" target="_blank" rel="noopener">Написати в Telegram ↗</a></div>
-  </div>
-</footer>
-
-<script>
-  // ---------- mobile nav ----------
-  const toggle = document.getElementById('navToggle');
-  const menu = document.getElementById('navMenu');
-  toggle.addEventListener('click', () => {
-    const isOpen = menu.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', isOpen);
-  });
-  document.querySelectorAll('#navMenu a').forEach(link => {
-    link.addEventListener('click', () => {
-      menu.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    });
-  });
-
-  // ---------- hero typing effect ----------
-  const phrases = [
-    "Сайт для вашого бізнесу",
-    "Інтернет-магазин з адмінкою",
-    "Заявки, що приходять самі"
-  ];
-  const typeEl = document.getElementById('typeLine');
-  const cursor = document.createElement('span');
-  cursor.className = 'type-cursor';
-
-  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    let phraseIndex = 0, charIndex = 0, deleting = false;
-    function tick(){
-      const current = phrases[phraseIndex];
-      if(!deleting){
-        charIndex++;
-        if(charIndex > current.length){ deleting = true; setTimeout(tick, 1400); return; }
-      } else {
-        charIndex--;
-        if(charIndex === 0){ deleting = false; phraseIndex = (phraseIndex+1) % phrases.length; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebPulse — розробка сайтів під ключ</title>
+    <meta
+      name="description"
+      content="Розробка сайтів під ключ: лендінги, інтернет-магазини, корпоративні сайти, автоматизація. Python/Flask, MySQL, інтеграції з Nova Poshta, LiqPay, MonoPay."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #fcfaff;
+        --surface: #ffffff;
+        --accent: #7c5cfc;
+        --accent-hover: #6a46f5;
+        --accent-soft: #f1ecff;
+        --accent-soft-2: #e8e1ff;
+        --ink: #1e1b2e;
+        --muted: #6e6785;
+        --border: #e7e1fa;
+        --display: "Sora", sans-serif;
+        --body: "Manrope", sans-serif;
+        --mono: "IBM Plex Mono", monospace;
       }
-      typeEl.textContent = current.slice(0, charIndex);
-      typeEl.appendChild(cursor);
-      setTimeout(tick, deleting ? 35 : 65);
-    }
-    tick();
-  } else {
-    typeEl.textContent = phrases[0];
-    typeEl.appendChild(cursor);
-  }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--body);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+      }
+      ::selection {
+        background: var(--accent);
+        color: #fff;
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
 
-  // ---------- contact form ----------
-  // Форма шле дані на Cloudflare Worker — маленький бекенд, який приймає
-  // заявку і сам пересилає її в Telegram. Токен бота зберігається лише
-  // в секретах воркера, сюди ніколи не потрапляє — див. README.md.
-  const FORM_ENDPOINT = "https://YOUR-WORKER-SUBDOMAIN.workers.dev";
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 28px;
+      }
 
-  const form = document.getElementById('orderForm');
-  const status = document.getElementById('formStatus');
-  const submitBtn = document.getElementById('submitBtn');
+      h1,
+      h2,
+      h3 {
+        font-family: var(--display);
+        letter-spacing: -0.01em;
+      }
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+      /* ---------- HEADER ---------- */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(252, 250, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 18px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .logo {
+        font-family: var(--display);
+        font-weight: 700;
+        font-size: 18px;
+      }
+      .logo span {
+        color: var(--accent);
+      }
+      nav ul {
+        list-style: none;
+        display: flex;
+        gap: 30px;
+      }
+      nav a {
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--muted);
+        transition: color 0.15s ease;
+      }
+      nav a:hover {
+        color: var(--ink);
+      }
+      .nav-cta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .nav-toggle {
+        display: none;
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+      @media (max-width: 820px) {
+        nav {
+          position: fixed;
+          top: 65px;
+          left: 0;
+          right: 0;
+          background: var(--surface);
+          border-bottom: 1px solid var(--border);
+          transform: translateY(-140%);
+          transition: transform 0.25s ease;
+        }
+        nav.open {
+          transform: translateY(0);
+        }
+        nav ul {
+          flex-direction: column;
+          gap: 0;
+          padding: 8px 0;
+        }
+        nav a {
+          display: block;
+          padding: 14px 28px;
+          border-top: 1px solid var(--border);
+        }
+        .nav-cta {
+          display: none;
+        }
+        .nav-toggle {
+          display: block;
+          margin-left: auto;
+        }
+      }
 
-    // honeypot: якщо заповнене — тихо ігноруємо (бот)
-    if(form._hp.value){ return; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 13px 24px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14.5px;
+        text-decoration: none;
+        border: 1.5px solid transparent;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        font-family: var(--body);
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--accent-hover);
+        transform: translateY(-1px);
+      }
+      .btn-ghost {
+        border-color: var(--border);
+        color: var(--ink);
+        background: var(--surface);
+      }
+      .btn-ghost:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
 
-    const data = {
-      name: form.name.value.trim(),
-      contact: form.contact.value.trim(),
-      service: form.service.value,
-      message: form.message.value.trim()
-    };
+      /* ---------- BROWSER FRAME (signature element) ---------- */
+      .browser-frame {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 30px 60px -20px rgba(124, 92, 252, 0.25);
+      }
+      .browser-chrome {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        background: var(--accent-soft);
+        border-bottom: 1px solid var(--border);
+      }
+      .dots {
+        display: flex;
+        gap: 6px;
+      }
+      .dots span {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #d9cffb;
+      }
+      .browser-url {
+        flex: 1;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        padding: 6px 12px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
 
-    if(!data.name || !data.contact || !data.message){
-      status.textContent = "Заповніть усі поля.";
-      status.className = "form-status err";
-      return;
-    }
+      /* ---------- SECTION SHELL ---------- */
+      section {
+        padding: 150px 0;
+      }
+      @media (max-width: 680px) {
+        section {
+          padding: 96px 0;
+        }
+      }
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 14px;
+        font-weight: 600;
+      }
+      h2.section-title {
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 700;
+        margin-bottom: 18px;
+      }
+      .section-lede {
+        color: var(--muted);
+        font-size: 17px;
+        max-width: 560px;
+        margin-bottom: 56px;
+      }
 
-    submitBtn.disabled = true;
-    status.textContent = "Надсилаю…";
-    status.className = "form-status";
+      .tint {
+        background: var(--accent-soft);
+      }
+      .tint-alt {
+        background: linear-gradient(
+          180deg,
+          var(--accent-soft) 0%,
+          var(--bg) 100%
+        );
+      }
 
-    try{
-      const res = await fetch(FORM_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+      /* ---------- HERO ---------- */
+      .hero {
+        padding: 200px 0 120px;
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        text-align: center;
+      }
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-image: linear-gradient(
+            180deg,
+            rgba(252, 250, 255, 0.55) 0%,
+            rgba(252, 250, 255, 0.93) 68%,
+            var(--bg) 100%
+          ),
+          url("https://images.unsplash.com/photo-1751257983922-a627088d4c21?fm=jpg&q=70&w=2200&auto=format&fit=crop");
+        background-size: cover;
+        background-position: center;
+      }
+      .hero-grid {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+      }
+
+      h1 {
+        font-size: clamp(38px, 6.4vw, 64px);
+        font-weight: 800;
+        line-height: 1.06;
+        margin-bottom: 22px;
+      }
+      h1 .accent {
+        color: var(--accent);
+      }
+      .hero-sub {
+        font-size: 18px;
+        color: var(--muted);
+        max-width: 560px;
+        margin-bottom: 36px;
+      }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 14px;
+        margin-bottom: 40px;
+      }
+      .hero-trust {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 22px;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--muted);
+        margin-bottom: 56px;
+      }
+      .hero-trust span::before {
+        content: "— ";
+        color: var(--accent);
+      }
+
+      .hero-browser {
+        max-width: 640px;
+        width: 100%;
+        margin: 0 auto;
+      }
+      .hero-browser-body {
+        padding: 44px 32px;
+        text-align: center;
+      }
+      .type-line {
+        font-family: var(--display);
+        font-weight: 800;
+        font-size: clamp(22px, 3.4vw, 30px);
+        min-height: 1.3em;
+      }
+      .type-cursor {
+        display: inline-block;
+        width: 3px;
+        height: 1em;
+        background: var(--accent);
+        vertical-align: middle;
+        margin-left: 2px;
+        animation: blink 1s steps(1) infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+      .hero-browser-tags {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 22px;
+      }
+      .hero-browser-tags span {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--accent);
+        background: var(--accent-soft);
+        border: 1px solid var(--accent-soft-2);
+        padding: 5px 10px;
+        border-radius: 999px;
+      }
+
+      /* ---------- SERVICES ---------- */
+      .service-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
+      @media (max-width: 720px) {
+        .service-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .service-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+      }
+      .service-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 44px -24px rgba(124, 92, 252, 0.35);
+      }
+      .service-card--wide {
+        grid-column: 1 / -1;
+      }
+      .service-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: var(--accent-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--mono);
+        font-weight: 600;
+        color: var(--accent);
+        font-size: 15px;
+      }
+      .service-card h3 {
+        font-size: 19px;
+        font-weight: 700;
+      }
+      .service-card p {
+        color: var(--muted);
+        font-size: 14.5px;
+      }
+      .service-integrations {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--accent);
+      }
+      .service-foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: auto;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
+      }
+      .service-price {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .service-price small {
+        color: var(--muted);
+        font-weight: 400;
+      }
+
+      /* ---------- PROCESS ---------- */
+      .process-list {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+      @media (max-width: 900px) {
+        .process-list {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 520px) {
+        .process-list {
+          grid-template-columns: 1fr;
+        }
+      }
+      .process-step {
+        position: relative;
+        padding-top: 8px;
+      }
+      .process-num {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--accent);
+        font-weight: 700;
+        margin-bottom: 14px;
+        display: block;
+      }
+      .process-step h3 {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .process-step p {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .process-step:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        top: 6px;
+        right: -27px;
+        color: var(--accent);
+        font-family: var(--mono);
+        font-size: 20px;
+        font-weight: 600;
+      }
+      @media (max-width: 900px) {
+        .process-step:not(:last-child)::after {
+          display: none;
+        }
+      }
+
+      /* ---------- PORTFOLIO ---------- */
+      .portfolio-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
+      @media (max-width: 780px) {
+        .portfolio-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .portfolio-card {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+      .portfolio-body {
+        padding: 26px 24px;
+      }
+      .portfolio-tag {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--accent);
+        background: var(--accent-soft);
+        padding: 4px 9px;
+        border-radius: 6px;
+        margin-bottom: 12px;
+      }
+      .portfolio-card h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .portfolio-card p {
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 14px;
+      }
+      .portfolio-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .ptag {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        padding: 3px 8px;
+        border-radius: 5px;
+      }
+      .portfolio-status {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--accent);
+      }
+
+      /* ---------- STACK ---------- */
+      .stack-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .stack-chip {
+        font-family: var(--mono);
+        font-size: 13.5px;
+        padding: 9px 16px;
+        border-radius: 10px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+      }
+
+      /* ---------- CONTACT ---------- */
+      .contact-shell {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 48px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+      }
+      @media (max-width: 780px) {
+        .contact-shell {
+          grid-template-columns: 1fr;
+          padding: 32px 24px;
+        }
+      }
+      .contact-info h3 {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+      .contact-info p {
+        color: var(--muted);
+        font-size: 15px;
+        margin-bottom: 28px;
+      }
+      .contact-direct {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .contact-direct a {
+        display: flex;
+        justify-content: space-between;
+        padding: 14px 0;
+        text-decoration: none;
+        border-bottom: 1px solid var(--border);
+        font-size: 14.5px;
+        font-weight: 600;
+      }
+      .contact-direct a:first-child {
+        border-top: 1px solid var(--border);
+      }
+      .contact-direct a span:last-child {
+        color: var(--muted);
+        font-weight: 400;
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .field label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        font-family: var(--body);
+        font-size: 14.5px;
+        padding: 12px 14px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      input:focus,
+      textarea:focus,
+      select:focus {
+        border-color: var(--accent);
+      }
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1L6 6L11 1' stroke='%236E6785' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 38px;
+        cursor: pointer;
+      }
+      select:focus {
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1L6 6L11 1' stroke='%237C5CFC' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+      }
+
+      .hp {
+        position: absolute;
+        left: -9999px;
+        opacity: 0;
+      }
+      .form-status {
+        font-size: 13.5px;
+        min-height: 20px;
+        font-weight: 600;
+      }
+      .form-status.ok {
+        color: #1f9d55;
+      }
+      .form-status.err {
+        color: #e14848;
+      }
+
+      /* ---------- FOOTER ---------- */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 36px 0;
+      }
+      .footer-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .footer-inner {
+        font-size: 13.5px;
+        color: var(--muted);
+      }
+      .footer-inner a {
+        text-decoration: none;
+        font-weight: 600;
+        color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="nav-inner">
+        <div class="logo">Web<span>Pulse</span></div>
+        <nav id="navMenu">
+          <ul>
+            <li><a href="#services">Послуги</a></li>
+            <li><a href="#process">Як працюємо</a></li>
+            <li><a href="#portfolio">Роботи</a></li>
+            <li><a href="#stack">Технології</a></li>
+            <li><a href="#contact">Контакти</a></li>
+          </ul>
+        </nav>
+        <div class="nav-cta">
+          <a href="#contact" class="btn btn-primary">Замовити сайт</a>
+        </div>
+        <button
+          class="nav-toggle"
+          id="navToggle"
+          aria-label="Відкрити меню"
+          aria-expanded="false"
+        >
+          ≡
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="wrap hero-grid">
+          <h1>
+            Сайт, який <span class="accent">продає</span>,<br />а не просто
+            існує
+          </h1>
+          <p class="hero-sub">
+            Розробляю лендінги, інтернет-магазини та корпоративні сайти під ключ
+            — від макету до запуску.
+          </p>
+          <div class="hero-actions">
+            <a href="#contact" class="btn btn-primary">Обговорити проєкт</a>
+            <a href="#portfolio" class="btn btn-ghost">Переглянути роботи</a>
+          </div>
+          <div class="hero-trust">
+            <span>Python / Flask</span>
+            <span>MySQL</span>
+            <span>Адмін-панелі</span>
+            <span>Telegram-боти</span>
+            <span>Nova Poshta API</span>
+          </div>
+
+          <div class="hero-browser browser-frame">
+            <div class="browser-chrome">
+              <div class="dots"><span></span><span></span><span></span></div>
+              <div class="browser-url">ваш-бізнес.com.ua</div>
+            </div>
+            <div class="hero-browser-body">
+              <div class="type-line" id="typeLine">
+                <span class="type-cursor"></span>
+              </div>
+              <div class="hero-browser-tags">
+                <span>Лендінг</span><span>Інтернет-магазин</span
+                ><span>Корпоративний сайт</span><span>Автоматизація</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVICES -->
+      <section class="tint" id="services">
+        <div class="wrap">
+          <div class="eyebrow">Послуги</div>
+          <h2 class="section-title">Що я роблю</h2>
+          <p class="section-lede">
+            Від простого одностраничника до магазину з власною адмін-панеллю та
+            підключеними платежами. Ціни орієнтовні — точну вартість називаю
+            після короткого брифу.
+          </p>
+          <div class="service-grid">
+            <div class="service-card">
+              <div class="service-icon">01</div>
+              <h3>Лендінг / сайт-візитка</h3>
+              <p>
+                Односторінковий сайт під конкретну пропозицію: акція, послуга,
+                захід. Швидкий запуск, адаптивна вёрстка, форма заявки.
+              </p>
+              <div class="service-foot">
+                <span class="service-price"
+                  >$150 · ₴6 690 <small>/ 1–2 тижні</small></span
+                >
+              </div>
+            </div>
+
+            <div class="service-card">
+              <div class="service-icon">02</div>
+              <h3>Інтернет-магазин</h3>
+              <p>
+                Каталог товарів, кошик, оформлення замовлення, власна
+                адмін-панель для керування товарами та цінами без розробника.
+              </p>
+              <div class="service-foot">
+                <span class="service-price"
+                  >від $350 · ₴15 610
+                  <small>/ 3–5 тижнів, є додаткові функції</small></span
+                >
+              </div>
+            </div>
+
+            <div class="service-card">
+              <div class="service-icon">03</div>
+              <h3>Корпоративний сайт</h3>
+              <p>
+                Багатосторінковий сайт компанії: продумана структура розділів і
+                зручне керування контентом без залучення розробника на кожну
+                правку.
+              </p>
+              <div class="service-foot">
+                <span class="service-price">за індивідуальним розрахунком</span>
+              </div>
+            </div>
+
+            <div class="service-card">
+              <div class="service-icon">04</div>
+              <h3>Автоматизація</h3>
+              <p>
+                Парсери для збору та оновлення даних, Telegram-боти, інтеграція
+                сайту із зовнішніми API та сервісами.
+              </p>
+              <div class="service-foot">
+                <span class="service-price">за запитом</span>
+              </div>
+            </div>
+
+            <div class="service-card service-card--wide">
+              <div class="service-icon">05</div>
+              <h3>Підтримка сайту</h3>
+              <p>
+                Технічна підтримка вже готового сайту: правки контенту,
+                моніторинг роботи, дрібні доробки та консультації.
+              </p>
+              <div class="service-foot">
+                <span class="service-price"
+                  >від $35 · ₴1 561
+                  <small>/ місяць, залежить від сайту</small></span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROCESS -->
+      <section id="process">
+        <div class="wrap">
+          <div class="eyebrow">Процес</div>
+          <h2 class="section-title">Як ми працюємо</h2>
+          <p class="section-lede">
+            Чотири кроки від заявки до сайту, який уже приносить заявки вам.
+          </p>
+          <div class="process-list">
+            <div class="process-step">
+              <span class="process-num">01</span>
+              <h3>Заявка</h3>
+              <p>
+                Пишете в формі нижче або в Telegram — обговорюємо задачу і
+                формат сайту.
+              </p>
+            </div>
+            <div class="process-step">
+              <span class="process-num">02</span>
+              <h3>Бриф і оцінка</h3>
+              <p>
+                Уточнюю деталі, структуру сайту, називаю строки та вартість.
+              </p>
+            </div>
+            <div class="process-step">
+              <span class="process-num">03</span>
+              <h3>Розробка</h3>
+              <p>
+                Роблю сайт, показую проміжні версії, вношу правки за вашими
+                коментарями.
+              </p>
+            </div>
+            <div class="process-step">
+              <span class="process-num">04</span>
+              <h3>Запуск</h3>
+              <p>
+                Переносимо сайт на хостинг, перевіряємо все і за потреби
+                супроводжую далі.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PORTFOLIO -->
+      <section class="tint-alt" id="portfolio">
+        <div class="wrap">
+          <div class="eyebrow">Приклади робіт</div>
+          <h2 class="section-title">Реалізовані проєкти</h2>
+          <p class="section-lede">
+            Кілька сайтів, які вже працюють і приносять клієнтам заявки та
+            продажі.
+          </p>
+          <div class="portfolio-grid">
+            <a
+              class="portfolio-card browser-frame"
+              href="https://www.bwauto.com.ua"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="browser-chrome">
+                <div class="dots"><span></span><span></span><span></span></div>
+                <div class="browser-url">bwauto.com.ua</div>
+              </div>
+              <div class="portfolio-body">
+                <span class="portfolio-tag">Каталог + магазин</span>
+                <h3>BW Auto</h3>
+                <p>
+                  Каталог автомобілів з автоматичним поповненням через власний
+                  парсер, калькулятори на Vue.js, вбудований магазин
+                  автозапчастин.
+                </p>
+                <div class="portfolio-stack">
+                  <span class="ptag">Flask</span><span class="ptag">Vue.js</span
+                  ><span class="ptag">MySQL</span
+                  ><span class="ptag">Парсер</span>
+                </div>
+              </div>
+            </a>
+
+            <a
+              class="portfolio-card browser-frame"
+              href="https://www.originalbrands.com.ua"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="browser-chrome">
+                <div class="dots"><span></span><span></span><span></span></div>
+                <div class="browser-url">originalbrands.com.ua</div>
+              </div>
+              <div class="portfolio-body">
+                <span class="portfolio-tag">Магазин + адмінка</span>
+                <h3>Original Brands</h3>
+                <p>
+                  Повноцінний інтернет-магазин з власною адмін-панеллю:
+                  керування товарами, замовленнями та контентом.
+                </p>
+                <div class="portfolio-stack">
+                  <span class="ptag">Flask</span><span class="ptag">MySQL</span
+                  ><span class="ptag">Admin panel</span>
+                </div>
+              </div>
+            </a>
+
+            <a
+              class="portfolio-card browser-frame"
+              href="https://tochmed.com.ua"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="browser-chrome">
+                <div class="dots"><span></span><span></span><span></span></div>
+                <div class="browser-url">tochmed.com.ua</div>
+              </div>
+              <div class="portfolio-body">
+                <span class="portfolio-tag">Односторінковий магазин</span>
+                <h3>Tochmed</h3>
+                <p>
+                  Легкий магазин з фіксованим каталогом на чистому HTML/CSS/JS —
+                  без бази даних, швидкий і простий.
+                </p>
+                <div class="portfolio-stack">
+                  <span class="ptag">HTML</span><span class="ptag">CSS</span
+                  ><span class="ptag">JavaScript</span>
+                </div>
+              </div>
+            </a>
+
+            <div class="portfolio-card browser-frame">
+              <div class="browser-chrome">
+                <div class="dots"><span></span><span></span><span></span></div>
+                <div class="browser-url">bestmed — у розробці</div>
+              </div>
+              <div class="portfolio-body">
+                <span class="portfolio-tag">У розробці</span>
+                <h3>BestMed</h3>
+                <p>
+                  Новий проєкт на Python/Flask + MySQL. Посилання з'явиться
+                  після запуску.
+                </p>
+                <div class="portfolio-stack">
+                  <span class="ptag">Flask</span><span class="ptag">MySQL</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STACK -->
+      <section id="stack">
+        <div class="wrap">
+          <div class="eyebrow">Технології</div>
+          <h2 class="section-title">Чим це зроблено</h2>
+          <p class="section-lede">
+            Стек підбираю під задачу, а не навпаки — тому список трохи ширший,
+            ніж в одному проєкті.
+          </p>
+          <div class="stack-cloud">
+            <span class="stack-chip">Python</span>
+            <span class="stack-chip">Flask</span>
+            <span class="stack-chip">MySQL</span>
+            <span class="stack-chip">HTML / CSS / JS</span>
+            <span class="stack-chip">Vue.js</span>
+            <span class="stack-chip">React</span>
+            <span class="stack-chip">Bootstrap</span>
+            <span class="stack-chip">Foundation</span>
+            <span class="stack-chip">BeautifulSoup4 / Selenium</span>
+            <span class="stack-chip">Telegram-боти</span>
+            <span class="stack-chip">Nova Poshta API</span>
+            <span class="stack-chip">LiqPay</span>
+            <span class="stack-chip">MonoPay</span>
+            <span class="stack-chip">REST API</span>
+            <span class="stack-chip">Git</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="tint" id="contact">
+        <div class="wrap">
+          <div class="eyebrow">Контакти</div>
+          <h2 class="section-title">Замовити сайт</h2>
+          <div class="contact-shell">
+            <div class="contact-info">
+              <h3>Розкажіть про задачу</h3>
+              <p>
+                Заповніть форму — повідомлення одразу прийде мені в Telegram,
+                відповідаю зазвичай протягом дня. Або напишіть напряму:
+              </p>
+              <div class="contact-direct">
+                <a href="https://t.me/d0n0ts1lly" target="_blank" rel="noopener"
+                  ><span>Telegram</span><span>@d0n0ts1lly</span></a
+                >
+                <a href="mailto:ivanbadun14032007@gmail.com"
+                  ><span>Email</span><span>ivanbadun14032007@gmail.com</span></a
+                >
+                <a href="tel:+380660184070"
+                  ><span>Телефон</span><span>+380 66 018 4070</span></a
+                >
+              </div>
+            </div>
+
+            <form id="orderForm">
+              <input
+                type="text"
+                name="_hp"
+                class="hp"
+                tabindex="-1"
+                autocomplete="off"
+              />
+              <div class="field">
+                <label for="name">Ім'я</label>
+                <input id="name" name="name" type="text" required />
+              </div>
+              <div class="field">
+                <label for="contact">Telegram, телефон або email</label>
+                <input id="contact" name="contact" type="text" required />
+              </div>
+              <div class="field">
+                <label for="service">Що потрібно</label>
+                <select id="service" name="service">
+                  <option>Лендінг / сайт-візитка</option>
+                  <option>Інтернет-магазин</option>
+                  <option>Корпоративний сайт</option>
+                  <option>Автоматизація / бот / парсер</option>
+                  <option>Підтримка сайту</option>
+                  <option>Ще не визначився(лась)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="message">Коротко про задачу</label>
+                <textarea id="message" name="message" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" id="submitBtn">
+                Надіслати заявку
+              </button>
+              <div class="form-status" id="formStatus"></div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap footer-inner">
+        <div>© 2026 WebPulse</div>
+        <div>
+          <a href="https://t.me/d0n0ts1lly" target="_blank" rel="noopener"
+            >Написати в Telegram ↗</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // ---------- mobile nav ----------
+      const toggle = document.getElementById("navToggle");
+      const menu = document.getElementById("navMenu");
+      toggle.addEventListener("click", () => {
+        const isOpen = menu.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", isOpen);
       });
-      if(!res.ok) throw new Error("bad status");
-      status.textContent = "Заявку надіслано! Відповім найближчим часом.";
-      status.className = "form-status ok";
-      form.reset();
-    } catch(err){
-      status.textContent = "Не вдалося надіслати. Напишіть напряму в Telegram — посилання вище.";
-      status.className = "form-status err";
-    } finally {
-      submitBtn.disabled = false;
-    }
-  });
-</script>
+      document.querySelectorAll("#navMenu a").forEach((link) => {
+        link.addEventListener("click", () => {
+          menu.classList.remove("open");
+          toggle.setAttribute("aria-expanded", "false");
+        });
+      });
 
-</body>
+      // ---------- hero typing effect ----------
+      const phrases = [
+        "Сайт для вашого бізнесу",
+        "Інтернет-магазин з адмінкою",
+        "Заявки, що приходять самі",
+      ];
+      const typeEl = document.getElementById("typeLine");
+      const cursor = document.createElement("span");
+      cursor.className = "type-cursor";
+
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        let phraseIndex = 0,
+          charIndex = 0,
+          deleting = false;
+        function tick() {
+          const current = phrases[phraseIndex];
+          if (!deleting) {
+            charIndex++;
+            if (charIndex > current.length) {
+              deleting = true;
+              setTimeout(tick, 1400);
+              return;
+            }
+          } else {
+            charIndex--;
+            if (charIndex === 0) {
+              deleting = false;
+              phraseIndex = (phraseIndex + 1) % phrases.length;
+            }
+          }
+          typeEl.textContent = current.slice(0, charIndex);
+          typeEl.appendChild(cursor);
+          setTimeout(tick, deleting ? 35 : 65);
+        }
+        tick();
+      } else {
+        typeEl.textContent = phrases[0];
+        typeEl.appendChild(cursor);
+      }
+
+      // ---------- contact form ----------
+      // Форма шле дані на Cloudflare Worker — маленький бекенд, який приймає
+      // заявку і сам пересилає її в Telegram. Токен бота зберігається лише
+      // в секретах воркера, сюди ніколи не потрапляє — див. README.md.
+      const FORM_ENDPOINT = "https://d0n0ts1lly.workers.dev";
+
+      const form = document.getElementById("orderForm");
+      const status = document.getElementById("formStatus");
+      const submitBtn = document.getElementById("submitBtn");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // honeypot: якщо заповнене — тихо ігноруємо (бот)
+        if (form._hp.value) {
+          return;
+        }
+
+        const data = {
+          name: form.name.value.trim(),
+          contact: form.contact.value.trim(),
+          service: form.service.value,
+          message: form.message.value.trim(),
+        };
+
+        if (!data.name || !data.contact || !data.message) {
+          status.textContent = "Заповніть усі поля.";
+          status.className = "form-status err";
+          return;
+        }
+
+        submitBtn.disabled = true;
+        status.textContent = "Надсилаю…";
+        status.className = "form-status";
+
+        try {
+          const res = await fetch(FORM_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          if (!res.ok) throw new Error("bad status");
+          status.textContent = "Заявку надіслано! Відповім найближчим часом.";
+          status.className = "form-status ok";
+          form.reset();
+        } catch (err) {
+          status.textContent =
+            "Не вдалося надіслати. Напишіть напряму в Telegram — посилання вище.";
+          status.className = "form-status err";
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+    </script>
+  </body>
 </html>
