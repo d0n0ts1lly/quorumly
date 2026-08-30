@@ -3,8 +3,8 @@
 // его в один и тот же Telegram-бот через Bot API.
 //
 // Секреты воркера (задаются через `wrangler secret put`, НЕ в коде):
-//   BOT_TOKEN — токен Telegram-бота
-//   CHAT_ID   — chat_id, куда слать сообщения
+//   TELEGRAM_BOT_TOKEN — токен Telegram-бота
+//   TELEGRAM_CHAT_ID   — chat_id, куда слать сообщения
 //
 // Формат запроса определяется автоматически:
 //   • есть поле "type" ("contact" | "call" | "order")  → заявка с tochmed.com.ua
@@ -48,16 +48,16 @@ export default {
       return json({ ok: false, error: "invalid payload" }, 400, corsHeaders);
     }
 
-    if (!env.BOT_TOKEN || !env.CHAT_ID) {
+    if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) {
       return json({ ok: false, error: "bot not configured" }, 500, corsHeaders);
     }
 
-    const tgUrl = `https://api.telegram.org/bot${env.BOT_TOKEN}/sendMessage`;
+    const tgUrl = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`;
     const tgRes = await fetch(tgUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        chat_id: env.CHAT_ID,
+        chat_id: env.TELEGRAM_CHAT_ID,
         text,
         parse_mode: "Markdown",
       }),
